@@ -1,0 +1,26 @@
+syntax = "proto3";
+message Msg {
+    oneof msg {
+        JoinMsg join = 1;
+        AppMsg appMsg = 2;
+    }
+}
+
+message ConnectMsg {
+
+}
+
+/** Join the session with given id */
+message JoinSessionMsg {
+    int64 sessionId = 1;
+}
+
+/**  */
+message CreateSessionMsg {
+
+}
+
+/** Broadcast app message */
+message BroadcastAppMsg {
+    google.protobuf.Any data = 1;
+}
