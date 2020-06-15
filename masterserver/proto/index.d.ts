@@ -5,8 +5,11 @@ export interface IMsg {
     /** Msg join */
     join?: (IJoinSessionMsg|null);
 
-    /** Msg appMsg */
-    appMsg?: (IBroadcastAppMsg|null);
+    /** Msg app */
+    app?: (IBroadcastAppMsg|null);
+
+    /** Msg connect */
+    connect?: (IConnectMsg|null);
 }
 
 /** Represents a Msg. */
@@ -21,11 +24,14 @@ export class Msg implements IMsg {
     /** Msg join. */
     public join?: (IJoinSessionMsg|null);
 
-    /** Msg appMsg. */
-    public appMsg?: (IBroadcastAppMsg|null);
+    /** Msg app. */
+    public app?: (IBroadcastAppMsg|null);
+
+    /** Msg connect. */
+    public connect?: (IConnectMsg|null);
 
     /** Msg msg. */
-    public msg?: ("join"|"appMsg");
+    public msg?: ("join"|"app"|"connect");
 
     /**
      * Creates a new Msg instance using the specified properties.

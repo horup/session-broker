@@ -16,7 +16,8 @@ $root.Msg = (function() {
      * @exports IMsg
      * @interface IMsg
      * @property {IJoinSessionMsg|null} [join] Msg join
-     * @property {IBroadcastAppMsg|null} [appMsg] Msg appMsg
+     * @property {IBroadcastAppMsg|null} [app] Msg app
+     * @property {IConnectMsg|null} [connect] Msg connect
      */
 
     /**
@@ -43,24 +44,32 @@ $root.Msg = (function() {
     Msg.prototype.join = null;
 
     /**
-     * Msg appMsg.
-     * @member {IBroadcastAppMsg|null|undefined} appMsg
+     * Msg app.
+     * @member {IBroadcastAppMsg|null|undefined} app
      * @memberof Msg
      * @instance
      */
-    Msg.prototype.appMsg = null;
+    Msg.prototype.app = null;
+
+    /**
+     * Msg connect.
+     * @member {IConnectMsg|null|undefined} connect
+     * @memberof Msg
+     * @instance
+     */
+    Msg.prototype.connect = null;
 
     // OneOf field names bound to virtual getters and setters
     var $oneOfFields;
 
     /**
      * Msg msg.
-     * @member {"join"|"appMsg"|undefined} msg
+     * @member {"join"|"app"|"connect"|undefined} msg
      * @memberof Msg
      * @instance
      */
     Object.defineProperty(Msg.prototype, "msg", {
-        get: $util.oneOfGetter($oneOfFields = ["join", "appMsg"]),
+        get: $util.oneOfGetter($oneOfFields = ["join", "app", "connect"]),
         set: $util.oneOfSetter($oneOfFields)
     });
 
@@ -90,8 +99,10 @@ $root.Msg = (function() {
             writer = $Writer.create();
         if (message.join != null && Object.hasOwnProperty.call(message, "join"))
             $root.JoinSessionMsg.encode(message.join, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-        if (message.appMsg != null && Object.hasOwnProperty.call(message, "appMsg"))
-            $root.BroadcastAppMsg.encode(message.appMsg, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+        if (message.app != null && Object.hasOwnProperty.call(message, "app"))
+            $root.BroadcastAppMsg.encode(message.app, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+        if (message.connect != null && Object.hasOwnProperty.call(message, "connect"))
+            $root.ConnectMsg.encode(message.connect, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
         return writer;
     };
 
@@ -130,7 +141,10 @@ $root.Msg = (function() {
                 message.join = $root.JoinSessionMsg.decode(reader, reader.uint32());
                 break;
             case 2:
-                message.appMsg = $root.BroadcastAppMsg.decode(reader, reader.uint32());
+                message.app = $root.BroadcastAppMsg.decode(reader, reader.uint32());
+                break;
+            case 3:
+                message.connect = $root.ConnectMsg.decode(reader, reader.uint32());
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -176,14 +190,24 @@ $root.Msg = (function() {
                     return "join." + error;
             }
         }
-        if (message.appMsg != null && message.hasOwnProperty("appMsg")) {
+        if (message.app != null && message.hasOwnProperty("app")) {
             if (properties.msg === 1)
                 return "msg: multiple values";
             properties.msg = 1;
             {
-                var error = $root.BroadcastAppMsg.verify(message.appMsg);
+                var error = $root.BroadcastAppMsg.verify(message.app);
                 if (error)
-                    return "appMsg." + error;
+                    return "app." + error;
+            }
+        }
+        if (message.connect != null && message.hasOwnProperty("connect")) {
+            if (properties.msg === 1)
+                return "msg: multiple values";
+            properties.msg = 1;
+            {
+                var error = $root.ConnectMsg.verify(message.connect);
+                if (error)
+                    return "connect." + error;
             }
         }
         return null;
@@ -206,10 +230,15 @@ $root.Msg = (function() {
                 throw TypeError(".Msg.join: object expected");
             message.join = $root.JoinSessionMsg.fromObject(object.join);
         }
-        if (object.appMsg != null) {
-            if (typeof object.appMsg !== "object")
-                throw TypeError(".Msg.appMsg: object expected");
-            message.appMsg = $root.BroadcastAppMsg.fromObject(object.appMsg);
+        if (object.app != null) {
+            if (typeof object.app !== "object")
+                throw TypeError(".Msg.app: object expected");
+            message.app = $root.BroadcastAppMsg.fromObject(object.app);
+        }
+        if (object.connect != null) {
+            if (typeof object.connect !== "object")
+                throw TypeError(".Msg.connect: object expected");
+            message.connect = $root.ConnectMsg.fromObject(object.connect);
         }
         return message;
     };
@@ -232,10 +261,15 @@ $root.Msg = (function() {
             if (options.oneofs)
                 object.msg = "join";
         }
-        if (message.appMsg != null && message.hasOwnProperty("appMsg")) {
-            object.appMsg = $root.BroadcastAppMsg.toObject(message.appMsg, options);
+        if (message.app != null && message.hasOwnProperty("app")) {
+            object.app = $root.BroadcastAppMsg.toObject(message.app, options);
             if (options.oneofs)
-                object.msg = "appMsg";
+                object.msg = "app";
+        }
+        if (message.connect != null && message.hasOwnProperty("connect")) {
+            object.connect = $root.ConnectMsg.toObject(message.connect, options);
+            if (options.oneofs)
+                object.msg = "connect";
         }
         return object;
     };

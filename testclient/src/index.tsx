@@ -1,12 +1,21 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {info} from './log';
+import {Msg} from 'masterserver/proto';
 
-const client = new WebSocket('ws://localhost:8080');
-client.onopen = ()=>{
+const ws = new WebSocket('ws://localhost:8080');
+ws.onopen = ()=>{
     info("connected");
+    const msg = new Msg({
+        connect:{
+
+        }
+    })
+
+    const data = Msg.encode(msg).finish();
+    ws.send(data);
 }
-client.onmessage = (msg)=>{
+ws.onmessage = (msg)=>{
     info(msg.data);
 }
 const Index = ()=>{
