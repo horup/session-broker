@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsnd --respawn index.ts"
+    "start": "tsnd --respawn index.ts",
+    "proto": "pbjs -t static-module -w commonjs -o proto/index.js ./proto/msg.proto && pbts -o proto/index.d.ts proto/index.js"
   },
   "repository": {
     "type": "git",
