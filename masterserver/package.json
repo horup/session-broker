@@ -18,9 +18,11 @@
   },
   "homepage": "https://github.com/horup/masterserver#readme",
   "dependencies": {
+    "@types/debug": "^4.1.5",
     "@types/ioredis": "^4.16.5",
     "@types/redis": "^2.8.22",
     "@types/ws": "^7.2.5",
+    "debug": "^4.1.1",
     "dotenv": "^8.2.0",
     "ioredis": "^4.17.3",
     "ts-node": "^8.10.2",
