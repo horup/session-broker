@@ -571,6 +571,9 @@ export interface IServerSessionAcceptMsg {
 
     /** ServerSessionAcceptMsg ownerId */
     ownerId?: (number|Long|null);
+
+    /** ServerSessionAcceptMsg name */
+    name?: (string|null);
 }
 
 /** Session join or create has been accepted. */
@@ -587,6 +590,9 @@ export class ServerSessionAcceptMsg implements IServerSessionAcceptMsg {
 
     /** ServerSessionAcceptMsg ownerId. */
     public ownerId: (number|Long);
+
+    /** ServerSessionAcceptMsg name. */
+    public name: string;
 
     /**
      * Creates a new ServerSessionAcceptMsg instance using the specified properties.

@@ -1,3 +1,4 @@
 require('dotenv').config()
 import './redis';
-import './server';
+import './client-manager';
+import './session-manager';

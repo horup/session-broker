@@ -41,6 +41,7 @@ message ClientCreateSessionMsg {
 message ServerSessionAcceptMsg {
     int64 sesionId = 1;
     int64 ownerId = 2;
+    string name = 3;
 }
 
 /** Broadcast app message */

@@ -1313,6 +1313,7 @@ $root.ServerSessionAcceptMsg = (function() {
      * @interface IServerSessionAcceptMsg
      * @property {number|Long|null} [sesionId] ServerSessionAcceptMsg sesionId
      * @property {number|Long|null} [ownerId] ServerSessionAcceptMsg ownerId
+     * @property {string|null} [name] ServerSessionAcceptMsg name
      */
 
     /**
@@ -1347,6 +1348,14 @@ $root.ServerSessionAcceptMsg = (function() {
     ServerSessionAcceptMsg.prototype.ownerId = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
 
     /**
+     * ServerSessionAcceptMsg name.
+     * @member {string} name
+     * @memberof ServerSessionAcceptMsg
+     * @instance
+     */
+    ServerSessionAcceptMsg.prototype.name = "";
+
+    /**
      * Creates a new ServerSessionAcceptMsg instance using the specified properties.
      * @function create
      * @memberof ServerSessionAcceptMsg
@@ -1374,6 +1383,8 @@ $root.ServerSessionAcceptMsg = (function() {
             writer.uint32(/* id 1, wireType 0 =*/8).int64(message.sesionId);
         if (message.ownerId != null && Object.hasOwnProperty.call(message, "ownerId"))
             writer.uint32(/* id 2, wireType 0 =*/16).int64(message.ownerId);
+        if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+            writer.uint32(/* id 3, wireType 2 =*/26).string(message.name);
         return writer;
     };
 
@@ -1413,6 +1424,9 @@ $root.ServerSessionAcceptMsg = (function() {
                 break;
             case 2:
                 message.ownerId = reader.int64();
+                break;
+            case 3:
+                message.name = reader.string();
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -1455,6 +1469,9 @@ $root.ServerSessionAcceptMsg = (function() {
         if (message.ownerId != null && message.hasOwnProperty("ownerId"))
             if (!$util.isInteger(message.ownerId) && !(message.ownerId && $util.isInteger(message.ownerId.low) && $util.isInteger(message.ownerId.high)))
                 return "ownerId: integer|Long expected";
+        if (message.name != null && message.hasOwnProperty("name"))
+            if (!$util.isString(message.name))
+                return "name: string expected";
         return null;
     };
 
@@ -1488,6 +1505,8 @@ $root.ServerSessionAcceptMsg = (function() {
                 message.ownerId = object.ownerId;
             else if (typeof object.ownerId === "object")
                 message.ownerId = new $util.LongBits(object.ownerId.low >>> 0, object.ownerId.high >>> 0).toNumber();
+        if (object.name != null)
+            message.name = String(object.name);
         return message;
     };
 
@@ -1515,6 +1534,7 @@ $root.ServerSessionAcceptMsg = (function() {
                 object.ownerId = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : long;
             } else
                 object.ownerId = options.longs === String ? "0" : 0;
+            object.name = "";
         }
         if (message.sesionId != null && message.hasOwnProperty("sesionId"))
             if (typeof message.sesionId === "number")
@@ -1526,6 +1546,8 @@ $root.ServerSessionAcceptMsg = (function() {
                 object.ownerId = options.longs === String ? String(message.ownerId) : message.ownerId;
             else
                 object.ownerId = options.longs === String ? $util.Long.prototype.toString.call(message.ownerId) : options.longs === Number ? new $util.LongBits(message.ownerId.low >>> 0, message.ownerId.high >>> 0).toNumber() : message.ownerId;
+        if (message.name != null && message.hasOwnProperty("name"))
+            object.name = message.name;
         return object;
     };
 

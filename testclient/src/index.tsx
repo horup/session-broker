@@ -23,13 +23,25 @@ ws.onopen = ()=>{
 const Index = ()=>{
     const [sessionId, setSessionId] = React.useState<number>();
     const [clientId, setClientId] = React.useState(0);
-    const startSession = ()=>{
+    const createSessionClick = ()=>{
+        const name = prompt("Session Name", "New Session");
         const msg = new ClientMsg({
-            
+            createSession:{
+                name:name
+            }
         })
-    }
-    const joinSession = ()=>{
 
+        ws.send(ClientMsg.encode(msg).finish());
+    }
+    const joinSessionClick = ()=>{
+        const id = prompt("Session ID", "");
+        const msg = new ClientMsg({
+            joinSession:{
+                sessionId:Number.parseInt(id)
+            }
+        })
+
+        ws.send(ClientMsg.encode(msg).finish());
     }
 
     React.useEffect(()=>{
@@ -48,8 +60,8 @@ const Index = ()=>{
     return <div>
         <div>Client ID: {clientId}</div>
         <div>Session ID: {sessionId}</div>
-        <button onClick={()=>startSession()}>Start Session</button>
-        <button onClick={()=>joinSession()}>Join Session</button>
+        <button onClick={()=>createSessionClick()}>Create Session</button>
+        <button onClick={()=>joinSessionClick()}>Join Session</button>
     </div>
 }
 
