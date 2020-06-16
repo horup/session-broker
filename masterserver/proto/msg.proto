@@ -1,26 +1,46 @@
 syntax = "proto3";
 import "google/protobuf/any.proto";
 
-message Msg {
+message ServerMsg {
     oneof msg {
-        JoinSessionMsg join = 1;
-        BroadcastAppMsg app = 2;
-        ConnectMsg connect = 3;
+        ServerWelcomeMsg welcomeMsg = 100;
+        ServerSessionAcceptMsg sessionAccept = 101;
     }
 }
 
-message ConnectMsg {
+message ClientMsg {
+    oneof msg {
+        ClientConnectMsg connect = 100;
+        ClientJoinSessionMsg joinSession = 101;
+        ClientCreateSessionMsg createSession = 102;
+    }
+}
 
+/**Connect to the master server */
+message ClientConnectMsg {
+
+}
+
+/**Client connection established with the contained clientId*/
+message ServerWelcomeMsg {
+    int64 clientId = 1;
 }
 
 /** Join the session with given id */
-message JoinSessionMsg {
+message ClientJoinSessionMsg {
     int64 sessionId = 1;
 }
 
-/**  */
-message CreateSessionMsg {
+/** Create a session with the given name and password */
+message ClientCreateSessionMsg {
+    string name = 1;
+    string password = 2;
+}
 
+/**Session join or create has been accepted. */
+message ServerSessionAcceptMsg {
+    int64 sesionId = 1;
+    int64 ownerId = 2;
 }
 
 /** Broadcast app message */

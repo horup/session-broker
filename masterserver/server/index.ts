@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import config from '../config';
 import {info as _info} from '../log';
-import {Msg} from '../proto';
+import {ClientMsg, ServerMsg} from '../proto';
 import { Reader } from 'protobufjs';
 import * as redis from '../redis';
 
@@ -29,13 +29,21 @@ wss.on('connection', (ws)=>{
     let clientId = undefined;
     ws.on('message', async (data)=>{
         const r = new Reader(data as any);
-        const msg = Msg.decode(r);
+        const msg = ClientMsg.decode(r);
         if (msg.connect)
         {
             clientId = await redis.newClientId();
             info(`Connect received, assigned client id of ${clientId}`);
             localClients.set(ws, clientId);
             redis.publishConnect(clientId);
+            
+            const serverMsg = new ServerMsg({
+                welcomeMsg:{
+                    clientId:clientId
+                }
+            });
+
+            ws.send(ServerMsg.encode(serverMsg).finish());
         }
     });
     ws.on(`close`, ()=>{
