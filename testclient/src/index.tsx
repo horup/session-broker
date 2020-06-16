@@ -17,16 +17,12 @@ ws.onopen = ()=>{
     const data = ClientMsg.encode(msg).finish();
     ws.send(data);
 }
-ws.onmessage = async (msg)=>{
-    const buffer = msg.data as ArrayBuffer;
-    const serverMsg = ServerMsg.decode(new Uint8Array(buffer));
-    console.log(serverMsg);
-   // console.log(serverMsg);
-}
+
 
 
 const Index = ()=>{
     const [sessionId, setSessionId] = React.useState<number>();
+    const [clientId, setClientId] = React.useState(0);
     const startSession = ()=>{
         const msg = new ClientMsg({
             
@@ -35,7 +31,22 @@ const Index = ()=>{
     const joinSession = ()=>{
 
     }
+
+    React.useEffect(()=>{
+        ws.onmessage = async (msg)=>{
+            const buffer = msg.data as ArrayBuffer;
+            const serverMsg = ServerMsg.decode(new Uint8Array(buffer));
+
+            if (serverMsg.welcomeMsg)
+            {
+                setClientId(serverMsg.welcomeMsg.clientId as number);
+            }
+        }
+    }, []);
+
+
     return <div>
+        <div>Client ID: {clientId}</div>
         <div>Session ID: {sessionId}</div>
         <button onClick={()=>startSession()}>Start Session</button>
         <button onClick={()=>joinSession()}>Join Session</button>
