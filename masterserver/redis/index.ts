@@ -2,17 +2,9 @@ import * as Redis from 'ioredis';
 import config from '../config';
 import {info} from '../log';
 import { RedisClient } from 'redis';
+import {redis, subscriber} from './redis';
 
-const redis = new Redis(config.REDIS_CONNECTION_STRING)
-redis.on('connect', ()=>{
-    info("Connected to redis");
-});
-
-const subscriber = new Redis(config.REDIS_CONNECTION_STRING)
-subscriber.on('connect', ()=>{
-    info("Subscriber Connected to redis");
-});
-
+export * from './connect';
 
 /**Creates a new id */
 export async function newId() 
@@ -21,14 +13,6 @@ export async function newId()
     return newId;
 }
 
-export function subscribeConnect(f:(clientId:number)=>any)
-{
-    subscriber.subscribe("connect");
-    subscriber.on('message', (channel, value)=>{
-        if (channel == 'connect')
-            f(Number.parseInt(value));
-    });
-}
 
 export function subscribeDisconnect(f:(clientId:number)=>any)
 {
@@ -39,10 +23,6 @@ export function subscribeDisconnect(f:(clientId:number)=>any)
     });
 }
 
-export async function publishConnect(clientId:number)
-{
-    const res = await redis.publish("connect", clientId.toString());
-}
 
 export async function publishDisconnect(clientId:number)
 {

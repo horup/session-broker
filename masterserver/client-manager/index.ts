@@ -5,7 +5,7 @@ import {ClientMsg, ServerMsg} from '../proto';
 import { Reader } from 'protobufjs';
 import * as redis from '../redis';
 
-const info = _info;//_info.extend('server');
+const info = _info.extend('client-manager');
 
 const wss = new WebSocket.Server({
     port:config.PORT
@@ -45,7 +45,6 @@ redis.subscribeSessionAccept((sessionAccept)=>{
 })
 
 wss.on('connection', (ws)=>{
-    info(`Client connected`);
     let clientId = undefined as number;
     ws.on('message', async (data)=>{
         const r = new Reader(data as any);
