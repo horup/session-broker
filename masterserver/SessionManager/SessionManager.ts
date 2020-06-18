@@ -14,4 +14,10 @@ redis.subscribeCreateSession(async (createSession)=>{
         name:createSession.name
     })
 
+    redis.addSession({
+        id:sessionId,
+        name:createSession.name,
+        owner:createSession.owner,
+        password:createSession.password
+    })
 })

@@ -1,4 +1,5 @@
 import { subscriber, redis } from "./redis";
+import { info } from "../log";
 
 export interface SessionAccept
 {
@@ -45,3 +46,20 @@ export async function publishCreateSession(session:CreateSession)
 {
     const res = await redis.publish("session:new", JSON.stringify(session));
 }
+
+
+export interface Session
+{
+    id:number;
+    owner:number;
+    name:string;
+    password:string;
+}
+
+export async function addSession(session:Session)
+{
+    redis.sadd("sessions", JSON.stringify(session));
+    const members = await redis.smembers("sessions");
+    info(members);
+}
+
