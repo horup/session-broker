@@ -33,7 +33,7 @@ redis.subscribeConnect((clientId)=>{
 })
 
 redis.subscribeDisconnect((clientId)=>{
-    info(`${clientId} has disconnected`);
+    info.extend(`subscribeDisconnect`)(`${clientId} has disconnected`);
     const ws = localClientSockets.get(clientId);
     if (ws != null)
         localClientIds.delete(ws);
@@ -41,7 +41,22 @@ redis.subscribeDisconnect((clientId)=>{
 })
 
 redis.subscribeSessionAccept((sessionAccept)=>{
-    info(`${sessionAccept.clientId} is has joined ${sessionAccept.name}(${sessionAccept.sessionid}) with owner:${sessionAccept.owner}`);
+    info(`session accepted with ${JSON.stringify(sessionAccept)}`);
+
+    const clientId = sessionAccept.clientId;
+    const ws = localClientSockets.get(clientId);
+    if (ws != null)
+    {
+        const serverMsg = new ServerMsg({
+            sessionAccept:{
+                name:sessionAccept.name,
+                ownerId:sessionAccept.owner,
+                sesionId:sessionAccept.sessionId
+            }
+        })
+
+        ws.send(ServerMsg.encode(serverMsg).finish());
+    }
 })
 
 wss.on('connection', (ws)=>{

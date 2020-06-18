@@ -3,7 +3,7 @@ import { subscriber, redis } from "./redis";
 export interface SessionAccept
 {
     clientId:number;
-    sessionid:number;
+    sessionId:number;
     name:string;
     owner:number;
 }
@@ -19,7 +19,7 @@ export function subscribeSessionAccept(f:(sessionAccept:SessionAccept)=>any)
 
 export async function publishSessionAccept(sessionAccept:SessionAccept)
 {
-    const res = await redis.publish("connect", JSON.stringify(sessionAccept));
+    const res = await redis.publish("session:accept", JSON.stringify(sessionAccept));
 }
 
 

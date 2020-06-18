@@ -6,11 +6,11 @@ const info = _info.extend('session-manager');
 
 redis.subscribeCreateSession(async (createSession)=>{
     const sessionId = await redis.newId();
-    info.extend(`subscribeCreateSession`)(createSession);
+    info(`session created with ${JSON.stringify(createSession)}`);
     redis.publishSessionAccept({
         clientId:createSession.owner,
         owner:createSession.owner,
-        sessionid:sessionId,
+        sessionId:sessionId,
         name:createSession.name
     })
 

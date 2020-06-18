@@ -53,6 +53,10 @@ const Index = ()=>{
             {
                 setClientId(serverMsg.welcomeMsg.clientId as number);
             }
+            else if (serverMsg.sessionAccept)
+            {
+                setSessionId(serverMsg.sessionAccept.sesionId as number);
+            }
         }
     }, []);
 
