@@ -59,7 +59,23 @@ export interface Session
 export async function addSession(session:Session)
 {
     redis.sadd("sessions", JSON.stringify(session));
-    const members = await redis.smembers("sessions");
-    info(members);
 }
 
+export async function getSessions():Promise<Session[]>
+{
+    const members = await redis.smembers("sessions");
+    const sessions:Session[] = [];
+    for (const member of members)
+    {
+        sessions.push(JSON.parse(member));
+    }
+
+    return sessions;
+}
+
+export async function getSession(sessionId:number):Promise<Session | undefined>
+{
+    const sessions = await getSessions();
+    const session = sessions.find(s=>s.id == sessionId);
+    return session;
+}

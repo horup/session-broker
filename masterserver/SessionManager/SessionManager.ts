@@ -26,5 +26,19 @@ redis.subscribeCreateSession(async (createSession)=>{
 redis.subscribeJoin(async (join)=>{
     const sessionId = join.sessionId;
     const clientId = join.clientId;
-    info(`client joined with ${JSON.stringify(join)}`);
+    const session = await redis.getSession(sessionId);
+    if (session)
+    {
+        info(`client joined with ${JSON.stringify(join)}`);
+        redis.publishSessionAccept({
+            clientId:join.clientId,
+            owner:session.owner,
+            sessionId:session.id,
+            name:session.name
+        })
+    }
+    else
+    {
+        info(`client ${clientId} tried to join session ${sessionId} which does not exist`)
+    }
 });
