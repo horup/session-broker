@@ -70,7 +70,6 @@ wss.on('connection', (ws)=>{
             localClientIds.set(ws, clientId);
             localClientSockets.set(clientId, ws);
             redis.publishConnect(clientId);
-          
         }
         else if (msg.createSession)
         {
@@ -78,28 +77,14 @@ wss.on('connection', (ws)=>{
             const password = msg.createSession.password ? msg.createSession.password : "";
             const owner = localClientIds.get(ws);
             redis.publishCreateSession({ name:name, password:password, owner:owner});
-/*
-            ws.send(ServerMsg.encode(new ServerMsg({
-                sessionAccept:{
-                    ownerId:owner,
-                    sesionId:sessionId,
-                    name:name
-                }
-            })).finish());*/
         }
         else if (msg.joinSession)
         {
-           // if (msg.joinSession.sessionId)
-             //   redis.publishJoin(clientId, msg.joinSession.sessionId as number);
-          /*  redis.publishNewSession({id:sessionId, name:name, password:password, owner:owner});
-
-            ws.send(ServerMsg.encode(new ServerMsg({
-                sessionAccept:{
-                    ownerId:owner,
-                    sesionId:sessionId,
-                    name:name
-                }
-            })).finish());*/
+            const sessionid = msg.joinSession.sessionId;
+            if (sessionid != null)
+            {
+                redis.publishJoin({sessionId:sessionid as number, clientId:clientId})
+            }
         }
     });
     ws.on(`close`, ()=>{

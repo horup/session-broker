@@ -11,3 +11,10 @@ export const subscriber = new Redis(config.REDIS_CONNECTION_STRING)
 subscriber.on('connect', ()=>{
     info("Subscriber Connected to redis");
 });
+
+/**Creates a new id */
+export async function newId() 
+{
+    const newId = await redis.incr("nextid");
+    return newId;
+}

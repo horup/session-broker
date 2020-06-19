@@ -21,3 +21,10 @@ redis.subscribeCreateSession(async (createSession)=>{
         password:createSession.password
     })
 })
+
+
+redis.subscribeJoin(async (join)=>{
+    const sessionId = join.sessionId;
+    const clientId = join.clientId;
+    info(`client joined with ${JSON.stringify(join)}`);
+});
