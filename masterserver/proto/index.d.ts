@@ -291,7 +291,7 @@ export class ClientConnectMsg implements IClientConnectMsg {
 export interface IServerWelcomeMsg {
 
     /** ServerWelcomeMsg clientId */
-    clientId?: (number|Long|null);
+    clientId?: (number|null);
 }
 
 /** Client connection established with the contained clientId */
@@ -304,7 +304,7 @@ export class ServerWelcomeMsg implements IServerWelcomeMsg {
     constructor(properties?: IServerWelcomeMsg);
 
     /** ServerWelcomeMsg clientId. */
-    public clientId: (number|Long);
+    public clientId: number;
 
     /**
      * Creates a new ServerWelcomeMsg instance using the specified properties.
@@ -381,7 +381,7 @@ export class ServerWelcomeMsg implements IServerWelcomeMsg {
 export interface IClientJoinSessionMsg {
 
     /** ClientJoinSessionMsg sessionId */
-    sessionId?: (number|Long|null);
+    sessionId?: (number|null);
 }
 
 /** Join the session with given id */
@@ -394,7 +394,7 @@ export class ClientJoinSessionMsg implements IClientJoinSessionMsg {
     constructor(properties?: IClientJoinSessionMsg);
 
     /** ClientJoinSessionMsg sessionId. */
-    public sessionId: (number|Long);
+    public sessionId: number;
 
     /**
      * Creates a new ClientJoinSessionMsg instance using the specified properties.
@@ -567,10 +567,10 @@ export class ClientCreateSessionMsg implements IClientCreateSessionMsg {
 export interface IServerSessionAcceptMsg {
 
     /** ServerSessionAcceptMsg sesionId */
-    sesionId?: (number|Long|null);
+    sesionId?: (number|null);
 
     /** ServerSessionAcceptMsg ownerId */
-    ownerId?: (number|Long|null);
+    ownerId?: (number|null);
 
     /** ServerSessionAcceptMsg name */
     name?: (string|null);
@@ -586,10 +586,10 @@ export class ServerSessionAcceptMsg implements IServerSessionAcceptMsg {
     constructor(properties?: IServerSessionAcceptMsg);
 
     /** ServerSessionAcceptMsg sesionId. */
-    public sesionId: (number|Long);
+    public sesionId: number;
 
     /** ServerSessionAcceptMsg ownerId. */
-    public ownerId: (number|Long);
+    public ownerId: number;
 
     /** ServerSessionAcceptMsg name. */
     public name: string;

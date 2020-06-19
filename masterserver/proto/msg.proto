@@ -23,12 +23,12 @@ message ClientConnectMsg {
 
 /**Client connection established with the contained clientId*/
 message ServerWelcomeMsg {
-    int64 clientId = 1;
+    uint32 clientId = 1;
 }
 
 /** Join the session with given id */
 message ClientJoinSessionMsg {
-    int64 sessionId = 1;
+    uint32 sessionId = 1;
 }
 
 /** Create a session with the given name and password */
@@ -39,8 +39,8 @@ message ClientCreateSessionMsg {
 
 /**Session join or create has been accepted. */
 message ServerSessionAcceptMsg {
-    int64 sesionId = 1;
-    int64 ownerId = 2;
+    uint32 sesionId = 1;
+    uint32 ownerId = 2;
     string name = 3;
 }
 
