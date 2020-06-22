@@ -3,7 +3,6 @@ import {info as _info} from '../log';
 
 const info = _info.extend('session-manager');
 
-
 redis.subscribeCreateSession(async (createSession)=>{
     const sessionId = await redis.newId();
     info(`session created with ${JSON.stringify(createSession)}`);
@@ -20,6 +19,10 @@ redis.subscribeCreateSession(async (createSession)=>{
         owner:createSession.owner,
         password:createSession.password
     })
+})
+
+redis.subscribeDisconnect(async (clientId)=>{
+
 })
 
 
@@ -42,3 +45,22 @@ redis.subscribeJoin(async (join)=>{
         info(`client ${clientId} tried to join session ${sessionId} which does not exist`)
     }
 });
+
+async function cleanup()
+{
+    try
+    {
+       // info("running cleanup")
+    }
+    catch
+    {
+
+    }
+    finally
+    {
+        setTimeout(()=>cleanup(), 15000);
+    }
+}
+
+cleanup();
+

@@ -79,3 +79,17 @@ export async function getSession(sessionId:number):Promise<Session | undefined>
     const session = sessions.find(s=>s.id == sessionId);
     return session;
 }
+
+export async function deleteSession(sessionId:number)
+{
+    const session = await getSession(sessionId);
+    const s = JSON.stringify(session);
+    await redis.srem("sessions", s);
+}
+
+export async function getSessionsWithOwner(owner:number):Promise<Session[] | undefined>
+{
+    const sessions = await getSessions();
+    const owned = sessions.filter(s=>s.owner == owner);
+    return owned;
+}

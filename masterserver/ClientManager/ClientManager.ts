@@ -22,6 +22,7 @@ redis.subscribeConnect((clientId)=>{
     const ws = localClientSockets.get(clientId);
     if (ws != null)
     {
+        redis.setClient(clientId);
         const serverMsg = new ServerMsg({
             welcomeMsg:{
                 clientId:clientId
@@ -37,7 +38,11 @@ redis.subscribeDisconnect((clientId)=>{
     info.extend(`subscribeDisconnect`)(`${clientId} has disconnected`);
     const ws = localClientSockets.get(clientId);
     if (ws != null)
+    {
+        redis.delClient(clientId);
         localClientIds.delete(ws);
+    }
+
     localClientSockets.delete(clientId);
 })
 

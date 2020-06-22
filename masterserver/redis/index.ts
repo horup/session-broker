@@ -9,4 +9,5 @@ export * from './connect';
 export * from './disconnect';
 export * from './session';
 export * from './join';
+export * from './client';
 
