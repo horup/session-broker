@@ -98,7 +98,7 @@ wss.on('connection', (ws)=>{
             const name = msg.createSession.name ? msg.createSession.name :"New Session";
             const password = msg.createSession.password ? msg.createSession.password : "";
             const owner = localClientIds.get(ws);
-            redis.publishCreateSession({ name:name, password:password, owner:owner});
+            redis.publishCreateSession({ name:name, password:password, owner:owner, nodeId:config.ID});
         }
         else if (msg.joinSession)
         {

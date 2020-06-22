@@ -1,9 +1,10 @@
+import { v4 as uuidv4 } from 'uuid';
+
 const config ={
     REDIS_CONNECTION_STRING:process.env.REDIS_CONNECTION_STRING,
-    PORT:Number.parseInt(process.env.PORT)
+    PORT:Number.parseInt(process.env.PORT),
+    ID:uuidv4() as string
 }
-
-console.log(process.env.REDIS_CONNECTION_STRING);
 
 const error = (s:string)=>{
     console.log("Error:" + s);

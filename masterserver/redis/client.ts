@@ -16,6 +16,17 @@ export async function delClient(clientId:number)
    await redis.del(`client:${clientId}`);
 }
 
+export async function getClient(clientId:number) : Promise<Client>
+{
+    const c = await redis.get(`client:${clientId}`);
+    if (c != null)
+    {
+        return JSON.parse(c) as Client;
+    }
+
+    return undefined;
+}
+
 export async function getClientIds():Promise<number[]>
 {
     const ids:number[] = [];

@@ -31,6 +31,7 @@ export interface CreateSession
     name:string;
     password:string;
     owner:number;
+    nodeId:string;
 }
 
 export function subscribeCreateSession(f:(session:CreateSession)=>any)
@@ -54,6 +55,7 @@ export interface Session
     owner:number;
     name:string;
     password:string;
+    nodeId:string;
 }
 
 export async function addSession(session:Session)
