@@ -5,6 +5,7 @@ message ServerMsg {
     oneof msg {
         ServerWelcomeMsg welcomeMsg = 100;
         ServerSessionAcceptMsg sessionAccept = 101;
+        ServerSessionsMsg sessions = 102;
     }
 }
 
@@ -47,4 +48,15 @@ message ServerSessionAcceptMsg {
 /** Broadcast app message */
 message BroadcastAppMsg {
     google.protobuf.Any data = 1;
+}
+
+message Session {
+    uint32 id = 1;
+    uint32 owner = 2;
+    string name = 3;
+    bool passwordProtected = 4;
+}
+
+message ServerSessionsMsg {
+    repeated Session sessions = 2;
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {info} from './log';
-import {ClientMsg, ServerMsg} from 'masterserver/proto';
+import {ClientMsg, ServerMsg, Session, ISession} from 'masterserver/proto';
 import {Reader} from 'protobufjs';
 
 const ws = new WebSocket('ws://localhost:8080');
@@ -18,11 +18,10 @@ ws.onopen = ()=>{
     ws.send(data);
 }
 
-
-
 const Index = ()=>{
     const [sessionId, setSessionId] = React.useState<number>();
     const [clientId, setClientId] = React.useState(0);
+    const [sessions, setSessions] = React.useState([] as ISession[])
     const createSessionClick = ()=>{
         const name = prompt("Session Name", "New Session");
         const msg = new ClientMsg({
@@ -33,8 +32,8 @@ const Index = ()=>{
 
         ws.send(ClientMsg.encode(msg).finish());
     }
-    const joinSessionClick = ()=>{
-        const id = prompt("Session ID", "");
+    const joinSessionClick = (forcedId?:number)=>{
+        const id = forcedId == null ? prompt("Session ID", "") : forcedId.toString();
         const msg = new ClientMsg({
             joinSession:{
                 sessionId:Number.parseInt(id)
@@ -42,6 +41,10 @@ const Index = ()=>{
         })
 
         ws.send(ClientMsg.encode(msg).finish());
+    }
+
+    const refreshClick = ()=>{
+
     }
 
     React.useEffect(()=>{
@@ -57,6 +60,10 @@ const Index = ()=>{
             {
                 setSessionId(serverMsg.sessionAccept.sesionId as number);
             }
+            else if (serverMsg.sessions)
+            {
+                setSessions(serverMsg.sessions.sessions);
+            }
         }
     }, []);
 
@@ -66,6 +73,38 @@ const Index = ()=>{
         <div>Session ID: {sessionId}</div>
         <button onClick={()=>createSessionClick()}>Create Session</button>
         <button onClick={()=>joinSessionClick()}>Join Session</button>
+        <button onClick={()=>refreshClick()}>Refresh</button>
+        <br/>
+        <br/>
+        <b>Sessions: {sessions.length}</b>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Password</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {sessions.map((s,i)=>{
+                    return  <tr key={i}>
+                                <td>
+                                    {s.id}
+                                </td>
+                                <td>
+                                    {s.name}
+                                </td>
+                                <td>
+                                    {s.passwordProtected == true ? "X" : ""}
+                                </td>
+                                <td>
+                                <button onClick={()=>joinSessionClick(s.id)}>Join</button>
+                                </td>
+                            </tr>
+                })}
+            </tbody>
+        </table>
     </div>
 }
 

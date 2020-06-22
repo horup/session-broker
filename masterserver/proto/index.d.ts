@@ -7,6 +7,9 @@ export interface IServerMsg {
 
     /** ServerMsg sessionAccept */
     sessionAccept?: (IServerSessionAcceptMsg|null);
+
+    /** ServerMsg sessions */
+    sessions?: (IServerSessionsMsg|null);
 }
 
 /** Represents a ServerMsg. */
@@ -24,8 +27,11 @@ export class ServerMsg implements IServerMsg {
     /** ServerMsg sessionAccept. */
     public sessionAccept?: (IServerSessionAcceptMsg|null);
 
+    /** ServerMsg sessions. */
+    public sessions?: (IServerSessionsMsg|null);
+
     /** ServerMsg msg. */
-    public msg?: ("welcomeMsg"|"sessionAccept");
+    public msg?: ("welcomeMsg"|"sessionAccept"|"sessions");
 
     /**
      * Creates a new ServerMsg instance using the specified properties.
@@ -750,6 +756,204 @@ export class BroadcastAppMsg implements IBroadcastAppMsg {
 
     /**
      * Converts this BroadcastAppMsg to JSON.
+     * @returns JSON object
+     */
+    public toJSON(): { [k: string]: any };
+}
+
+/** Properties of a Session. */
+export interface ISession {
+
+    /** Session id */
+    id?: (number|null);
+
+    /** Session owner */
+    owner?: (number|null);
+
+    /** Session name */
+    name?: (string|null);
+
+    /** Session passwordProtected */
+    passwordProtected?: (boolean|null);
+}
+
+/** Represents a Session. */
+export class Session implements ISession {
+
+    /**
+     * Constructs a new Session.
+     * @param [properties] Properties to set
+     */
+    constructor(properties?: ISession);
+
+    /** Session id. */
+    public id: number;
+
+    /** Session owner. */
+    public owner: number;
+
+    /** Session name. */
+    public name: string;
+
+    /** Session passwordProtected. */
+    public passwordProtected: boolean;
+
+    /**
+     * Creates a new Session instance using the specified properties.
+     * @param [properties] Properties to set
+     * @returns Session instance
+     */
+    public static create(properties?: ISession): Session;
+
+    /**
+     * Encodes the specified Session message. Does not implicitly {@link Session.verify|verify} messages.
+     * @param message Session message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encode(message: ISession, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Encodes the specified Session message, length delimited. Does not implicitly {@link Session.verify|verify} messages.
+     * @param message Session message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encodeDelimited(message: ISession, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Decodes a Session message from the specified reader or buffer.
+     * @param reader Reader or buffer to decode from
+     * @param [length] Message length if known beforehand
+     * @returns Session
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Session;
+
+    /**
+     * Decodes a Session message from the specified reader or buffer, length delimited.
+     * @param reader Reader or buffer to decode from
+     * @returns Session
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Session;
+
+    /**
+     * Verifies a Session message.
+     * @param message Plain object to verify
+     * @returns `null` if valid, otherwise the reason why it is not
+     */
+    public static verify(message: { [k: string]: any }): (string|null);
+
+    /**
+     * Creates a Session message from a plain object. Also converts values to their respective internal types.
+     * @param object Plain object
+     * @returns Session
+     */
+    public static fromObject(object: { [k: string]: any }): Session;
+
+    /**
+     * Creates a plain object from a Session message. Also converts values to other types if specified.
+     * @param message Session
+     * @param [options] Conversion options
+     * @returns Plain object
+     */
+    public static toObject(message: Session, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+    /**
+     * Converts this Session to JSON.
+     * @returns JSON object
+     */
+    public toJSON(): { [k: string]: any };
+}
+
+/** Properties of a ServerSessionsMsg. */
+export interface IServerSessionsMsg {
+
+    /** ServerSessionsMsg sessions */
+    sessions?: (ISession[]|null);
+}
+
+/** Represents a ServerSessionsMsg. */
+export class ServerSessionsMsg implements IServerSessionsMsg {
+
+    /**
+     * Constructs a new ServerSessionsMsg.
+     * @param [properties] Properties to set
+     */
+    constructor(properties?: IServerSessionsMsg);
+
+    /** ServerSessionsMsg sessions. */
+    public sessions: ISession[];
+
+    /**
+     * Creates a new ServerSessionsMsg instance using the specified properties.
+     * @param [properties] Properties to set
+     * @returns ServerSessionsMsg instance
+     */
+    public static create(properties?: IServerSessionsMsg): ServerSessionsMsg;
+
+    /**
+     * Encodes the specified ServerSessionsMsg message. Does not implicitly {@link ServerSessionsMsg.verify|verify} messages.
+     * @param message ServerSessionsMsg message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encode(message: IServerSessionsMsg, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Encodes the specified ServerSessionsMsg message, length delimited. Does not implicitly {@link ServerSessionsMsg.verify|verify} messages.
+     * @param message ServerSessionsMsg message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encodeDelimited(message: IServerSessionsMsg, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Decodes a ServerSessionsMsg message from the specified reader or buffer.
+     * @param reader Reader or buffer to decode from
+     * @param [length] Message length if known beforehand
+     * @returns ServerSessionsMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServerSessionsMsg;
+
+    /**
+     * Decodes a ServerSessionsMsg message from the specified reader or buffer, length delimited.
+     * @param reader Reader or buffer to decode from
+     * @returns ServerSessionsMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServerSessionsMsg;
+
+    /**
+     * Verifies a ServerSessionsMsg message.
+     * @param message Plain object to verify
+     * @returns `null` if valid, otherwise the reason why it is not
+     */
+    public static verify(message: { [k: string]: any }): (string|null);
+
+    /**
+     * Creates a ServerSessionsMsg message from a plain object. Also converts values to their respective internal types.
+     * @param object Plain object
+     * @returns ServerSessionsMsg
+     */
+    public static fromObject(object: { [k: string]: any }): ServerSessionsMsg;
+
+    /**
+     * Creates a plain object from a ServerSessionsMsg message. Also converts values to other types if specified.
+     * @param message ServerSessionsMsg
+     * @param [options] Conversion options
+     * @returns Plain object
+     */
+    public static toObject(message: ServerSessionsMsg, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+    /**
+     * Converts this ServerSessionsMsg to JSON.
      * @returns JSON object
      */
     public toJSON(): { [k: string]: any };

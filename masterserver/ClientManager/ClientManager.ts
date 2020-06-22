@@ -29,6 +29,7 @@ redis.subscribeConnect((clientId)=>{
         });
 
         ws.send(ServerMsg.encode(serverMsg).finish());
+        sendSessions(ws);
     }
 })
 
@@ -58,6 +59,20 @@ redis.subscribeSessionAccept((sessionAccept)=>{
         ws.send(ServerMsg.encode(serverMsg).finish());
     }
 })
+
+async function sendSessions(ws:WebSocket)
+{
+    const sessions = await redis.getSessions();
+    const msg = new ServerMsg({
+        sessions:{
+            sessions:sessions.map((s,i)=>{
+                return {id:s.id, name:s.name, owner:s.owner, passwordProtected: s.password.length != 0}
+            })
+        }
+    })
+
+    ws.send(ServerMsg.encode(msg).finish())
+}
 
 wss.on('connection', (ws)=>{
     let clientId = undefined as number;
@@ -90,14 +105,5 @@ wss.on('connection', (ws)=>{
     ws.on(`close`, ()=>{
         if (clientId)
             redis.publishDisconnect(clientId);
-       /* 
-        info(`Client disconnected`);
-        if (clientId != null)
-        {
-            localClientSockets.delete(clientId);
-            redis.publishDisconnect(clientId);
-        }
-
-        localClientIds.delete(ws);*/
     })
 });
