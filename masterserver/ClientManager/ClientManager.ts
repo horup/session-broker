@@ -114,3 +114,27 @@ wss.on('connection', (ws)=>{
             redis.publishDisconnect(clientId);
     })
 });
+
+
+async function tick()
+{
+
+    try
+    {
+        localClientIds.forEach(async (id, ws)=>{
+            {
+                await redis.refreshClient(id);
+            }
+        });
+    }
+    catch
+    {
+
+    }
+    finally
+    {
+        setTimeout(()=>tick(), 5000);
+    }
+}
+
+tick();

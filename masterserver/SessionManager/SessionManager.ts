@@ -16,7 +16,7 @@ redis.subscribeCreateSession(async (createSession)=>{
             name:createSession.name
         })
 
-        redis.addSession({
+        redis.setSession({
             id:sessionId,
             name:createSession.name,
             owner:createSession.owner,
@@ -51,7 +51,7 @@ redis.subscribeJoin(async (join)=>{
     }
 });
 
-async function cleanup()
+async function tick()
 {
     try
     {
@@ -63,8 +63,13 @@ async function cleanup()
             const client = await redis.getClient(owner);
             if (client == null)
             {
-                redis.deleteSession(session.id);
+                await redis.deleteSession(session.id);
                 info(`session ${session.id} deleted, owner ${owner} is no longer there`);
+            }
+            else
+            {
+                // owner is there, keep session alive
+                await redis.refreshSession(session.id);
             }
         }
     }
@@ -74,9 +79,9 @@ async function cleanup()
     }
     finally
     {
-        setTimeout(()=>cleanup(), 15000);
+        setTimeout(()=>tick(), 5000);
     }
 }
 
-cleanup();
+tick();
 

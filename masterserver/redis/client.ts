@@ -27,6 +27,11 @@ export async function getClient(clientId:number) : Promise<Client>
     return undefined;
 }
 
+export async function refreshClient(clientId:number) : Promise<any>
+{
+    redis.expire(`client:${clientId}`, 30);
+}
+
 export async function getClientIds():Promise<number[]>
 {
     const ids:number[] = [];

@@ -58,35 +58,68 @@ export interface Session
     nodeId:string;
 }
 
-export async function addSession(session:Session)
+export async function setSession(session:Session)
 {
-    redis.sadd("sessions", JSON.stringify(session));
+    redis.set(`session:${session.id}`, JSON.stringify(session), "ex", 30);
 }
 
 export async function getSessions():Promise<Session[]>
 {
-    const members = await redis.smembers("sessions");
-    const sessions:Session[] = [];
-    for (const member of members)
+    const res = [] as Session[];
+    const sessionIds = await getSessionIds();
+    for (const id of sessionIds)
     {
-        sessions.push(JSON.parse(member));
+        const s = await getSession(id);
+        res.push(s);
     }
 
-    return sessions;
+    return res;
+}
+
+export async function getSessionIds():Promise<number[]>
+{
+    
+    const ids:number[] = [];
+    const p = new Promise<number[]>(res=>{
+        const stream = redis.scanStream({match:"session:*"});
+        stream.on('data', (keys:string[])=>{
+        for (const key of keys)
+        {
+            const split = key.split(":");
+            const id = Number.parseInt(split[1]);
+            if (!Number.isNaN(id))
+                ids.push(id);
+        }
+
+        res(ids);
+    })
+    });
+    
+    return p;
 }
 
 export async function getSession(sessionId:number):Promise<Session | undefined>
 {
-    const sessions = await getSessions();
-    const session = sessions.find(s=>s.id == sessionId);
-    return session;
+    const s = await redis.get(`session:${sessionId}`);
+    if (s != undefined)
+    {
+        return JSON.parse(s);
+    }
+
+    return undefined;
+}
+
+export async function refreshSession(sessionId:number):Promise<any>
+{
+    redis.expire(`session:${sessionId}`, 30);
 }
 
 export async function deleteSession(sessionId:number)
 {
-    const session = await getSession(sessionId);
+    /*const session = await getSession(sessionId);
     const s = JSON.stringify(session);
-    await redis.srem("sessions", s);
+    await redis.srem("sessions", s);*/
+    await redis.del(`session:${sessionId}`);
 }
 
 export async function getSessionsWithOwner(owner:number):Promise<Session[] | undefined>
