@@ -22,7 +22,7 @@ redis.subscribeConnect((clientId)=>{
     const ws = localClientSockets.get(clientId);
     if (ws != null)
     {
-        redis.setClient(clientId);
+        redis.setClient(clientId, {id:clientId});
         const serverMsg = new ServerMsg({
             welcomeMsg:{
                 clientId:clientId
@@ -60,6 +60,8 @@ redis.subscribeSessionAccept((sessionAccept)=>{
                 sesionId:sessionAccept.sessionId
             }
         })
+
+        redis.setClient(clientId, {id:clientId, session:sessionAccept.sessionId});
 
         ws.send(ServerMsg.encode(serverMsg).finish());
     }

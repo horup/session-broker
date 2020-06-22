@@ -11,16 +11,16 @@ export interface SessionAccept
 
 export function subscribeSessionAccept(f:(sessionAccept:SessionAccept)=>any)
 {
-    subscriber.subscribe("session:accept");
+    subscriber.subscribe("sessionaccept");
     subscriber.on('message', (channel, value)=>{
-        if (channel == "session:accept")
+        if (channel == "sessionaccept")
             f(JSON.parse(value));
     });
 }
 
 export async function publishSessionAccept(sessionAccept:SessionAccept)
 {
-    const res = await redis.publish("session:accept", JSON.stringify(sessionAccept));
+    const res = await redis.publish("sessionaccept", JSON.stringify(sessionAccept));
 }
 
 
@@ -35,16 +35,16 @@ export interface CreateSession
 
 export function subscribeCreateSession(f:(session:CreateSession)=>any)
 {
-    subscriber.subscribe("session:new");
+    subscriber.subscribe("sessioncreate");
     subscriber.on('message', (channel, value)=>{
-        if (channel == 'session:new')
+        if (channel == 'sessioncreate')
             f(JSON.parse(value));
     });
 }
 
 export async function publishCreateSession(session:CreateSession)
 {
-    const res = await redis.publish("session:new", JSON.stringify(session));
+    const res = await redis.publish("sessioncreate", JSON.stringify(session));
 }
 
 

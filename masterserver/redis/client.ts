@@ -1,9 +1,14 @@
 import { redis } from "./redis";
 import { info } from "../log";
 
-export async function setClient(clientId:number, expire = 30)
+export interface Client
 {
-    await redis.set(`client:${clientId}`, "", "ex", expire);
+    id:number;
+    session?:number;
+}
+export async function setClient(clientId:number, client:Client, expire = 30)
+{
+    await redis.set(`client:${clientId}`, JSON.stringify(client), "ex", expire);
 }
 
 export async function delClient(clientId:number)
@@ -11,7 +16,7 @@ export async function delClient(clientId:number)
    await redis.del(`client:${clientId}`);
 }
 
-export async function getClients():Promise<number[]>
+export async function getClientIds():Promise<number[]>
 {
     const ids:number[] = [];
     const p = new Promise<number[]>(res=>{
