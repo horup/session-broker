@@ -115,6 +115,9 @@ export interface IClientMsg {
 
     /** ClientMsg createSession */
     createSession?: (IClientCreateSessionMsg|null);
+
+    /** ClientMsg refreshSessions */
+    refreshSessions?: (IClientRefreshSessionsMsg|null);
 }
 
 /** Represents a ClientMsg. */
@@ -135,8 +138,11 @@ export class ClientMsg implements IClientMsg {
     /** ClientMsg createSession. */
     public createSession?: (IClientCreateSessionMsg|null);
 
+    /** ClientMsg refreshSessions. */
+    public refreshSessions?: (IClientRefreshSessionsMsg|null);
+
     /** ClientMsg msg. */
-    public msg?: ("connect"|"joinSession"|"createSession");
+    public msg?: ("connect"|"joinSession"|"createSession"|"refreshSessions");
 
     /**
      * Creates a new ClientMsg instance using the specified properties.
@@ -288,6 +294,90 @@ export class ClientConnectMsg implements IClientConnectMsg {
 
     /**
      * Converts this ClientConnectMsg to JSON.
+     * @returns JSON object
+     */
+    public toJSON(): { [k: string]: any };
+}
+
+/** Properties of a ClientRefreshSessionsMsg. */
+export interface IClientRefreshSessionsMsg {
+}
+
+/** Refresh Master Server list */
+export class ClientRefreshSessionsMsg implements IClientRefreshSessionsMsg {
+
+    /**
+     * Constructs a new ClientRefreshSessionsMsg.
+     * @param [properties] Properties to set
+     */
+    constructor(properties?: IClientRefreshSessionsMsg);
+
+    /**
+     * Creates a new ClientRefreshSessionsMsg instance using the specified properties.
+     * @param [properties] Properties to set
+     * @returns ClientRefreshSessionsMsg instance
+     */
+    public static create(properties?: IClientRefreshSessionsMsg): ClientRefreshSessionsMsg;
+
+    /**
+     * Encodes the specified ClientRefreshSessionsMsg message. Does not implicitly {@link ClientRefreshSessionsMsg.verify|verify} messages.
+     * @param message ClientRefreshSessionsMsg message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encode(message: IClientRefreshSessionsMsg, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Encodes the specified ClientRefreshSessionsMsg message, length delimited. Does not implicitly {@link ClientRefreshSessionsMsg.verify|verify} messages.
+     * @param message ClientRefreshSessionsMsg message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encodeDelimited(message: IClientRefreshSessionsMsg, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Decodes a ClientRefreshSessionsMsg message from the specified reader or buffer.
+     * @param reader Reader or buffer to decode from
+     * @param [length] Message length if known beforehand
+     * @returns ClientRefreshSessionsMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ClientRefreshSessionsMsg;
+
+    /**
+     * Decodes a ClientRefreshSessionsMsg message from the specified reader or buffer, length delimited.
+     * @param reader Reader or buffer to decode from
+     * @returns ClientRefreshSessionsMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ClientRefreshSessionsMsg;
+
+    /**
+     * Verifies a ClientRefreshSessionsMsg message.
+     * @param message Plain object to verify
+     * @returns `null` if valid, otherwise the reason why it is not
+     */
+    public static verify(message: { [k: string]: any }): (string|null);
+
+    /**
+     * Creates a ClientRefreshSessionsMsg message from a plain object. Also converts values to their respective internal types.
+     * @param object Plain object
+     * @returns ClientRefreshSessionsMsg
+     */
+    public static fromObject(object: { [k: string]: any }): ClientRefreshSessionsMsg;
+
+    /**
+     * Creates a plain object from a ClientRefreshSessionsMsg message. Also converts values to other types if specified.
+     * @param message ClientRefreshSessionsMsg
+     * @param [options] Conversion options
+     * @returns Plain object
+     */
+    public static toObject(message: ClientRefreshSessionsMsg, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+    /**
+     * Converts this ClientRefreshSessionsMsg to JSON.
      * @returns JSON object
      */
     public toJSON(): { [k: string]: any };

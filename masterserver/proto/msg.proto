@@ -14,11 +14,17 @@ message ClientMsg {
         ClientConnectMsg connect = 100;
         ClientJoinSessionMsg joinSession = 101;
         ClientCreateSessionMsg createSession = 102;
+        ClientRefreshSessionsMsg refreshSessions = 103;
     }
 }
 
 /**Connect to the master server */
 message ClientConnectMsg {
+
+}
+
+/**Refresh Master Server list*/
+message ClientRefreshSessionsMsg {
 
 }
 

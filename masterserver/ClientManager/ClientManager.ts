@@ -108,6 +108,10 @@ wss.on('connection', (ws)=>{
                 redis.publishJoin({sessionId:sessionid as number, clientId:clientId})
             }
         }
+        else if (msg.refreshSessions)
+        {
+            sendSessions(ws);
+        }
     });
     ws.on(`close`, ()=>{
         if (clientId)

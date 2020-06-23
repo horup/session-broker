@@ -297,6 +297,7 @@ $root.ClientMsg = (function() {
      * @property {IClientConnectMsg|null} [connect] ClientMsg connect
      * @property {IClientJoinSessionMsg|null} [joinSession] ClientMsg joinSession
      * @property {IClientCreateSessionMsg|null} [createSession] ClientMsg createSession
+     * @property {IClientRefreshSessionsMsg|null} [refreshSessions] ClientMsg refreshSessions
      */
 
     /**
@@ -338,17 +339,25 @@ $root.ClientMsg = (function() {
      */
     ClientMsg.prototype.createSession = null;
 
+    /**
+     * ClientMsg refreshSessions.
+     * @member {IClientRefreshSessionsMsg|null|undefined} refreshSessions
+     * @memberof ClientMsg
+     * @instance
+     */
+    ClientMsg.prototype.refreshSessions = null;
+
     // OneOf field names bound to virtual getters and setters
     var $oneOfFields;
 
     /**
      * ClientMsg msg.
-     * @member {"connect"|"joinSession"|"createSession"|undefined} msg
+     * @member {"connect"|"joinSession"|"createSession"|"refreshSessions"|undefined} msg
      * @memberof ClientMsg
      * @instance
      */
     Object.defineProperty(ClientMsg.prototype, "msg", {
-        get: $util.oneOfGetter($oneOfFields = ["connect", "joinSession", "createSession"]),
+        get: $util.oneOfGetter($oneOfFields = ["connect", "joinSession", "createSession", "refreshSessions"]),
         set: $util.oneOfSetter($oneOfFields)
     });
 
@@ -382,6 +391,8 @@ $root.ClientMsg = (function() {
             $root.ClientJoinSessionMsg.encode(message.joinSession, writer.uint32(/* id 101, wireType 2 =*/810).fork()).ldelim();
         if (message.createSession != null && Object.hasOwnProperty.call(message, "createSession"))
             $root.ClientCreateSessionMsg.encode(message.createSession, writer.uint32(/* id 102, wireType 2 =*/818).fork()).ldelim();
+        if (message.refreshSessions != null && Object.hasOwnProperty.call(message, "refreshSessions"))
+            $root.ClientRefreshSessionsMsg.encode(message.refreshSessions, writer.uint32(/* id 103, wireType 2 =*/826).fork()).ldelim();
         return writer;
     };
 
@@ -424,6 +435,9 @@ $root.ClientMsg = (function() {
                 break;
             case 102:
                 message.createSession = $root.ClientCreateSessionMsg.decode(reader, reader.uint32());
+                break;
+            case 103:
+                message.refreshSessions = $root.ClientRefreshSessionsMsg.decode(reader, reader.uint32());
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -489,6 +503,16 @@ $root.ClientMsg = (function() {
                     return "createSession." + error;
             }
         }
+        if (message.refreshSessions != null && message.hasOwnProperty("refreshSessions")) {
+            if (properties.msg === 1)
+                return "msg: multiple values";
+            properties.msg = 1;
+            {
+                var error = $root.ClientRefreshSessionsMsg.verify(message.refreshSessions);
+                if (error)
+                    return "refreshSessions." + error;
+            }
+        }
         return null;
     };
 
@@ -518,6 +542,11 @@ $root.ClientMsg = (function() {
             if (typeof object.createSession !== "object")
                 throw TypeError(".ClientMsg.createSession: object expected");
             message.createSession = $root.ClientCreateSessionMsg.fromObject(object.createSession);
+        }
+        if (object.refreshSessions != null) {
+            if (typeof object.refreshSessions !== "object")
+                throw TypeError(".ClientMsg.refreshSessions: object expected");
+            message.refreshSessions = $root.ClientRefreshSessionsMsg.fromObject(object.refreshSessions);
         }
         return message;
     };
@@ -549,6 +578,11 @@ $root.ClientMsg = (function() {
             object.createSession = $root.ClientCreateSessionMsg.toObject(message.createSession, options);
             if (options.oneofs)
                 object.msg = "createSession";
+        }
+        if (message.refreshSessions != null && message.hasOwnProperty("refreshSessions")) {
+            object.refreshSessions = $root.ClientRefreshSessionsMsg.toObject(message.refreshSessions, options);
+            if (options.oneofs)
+                object.msg = "refreshSessions";
         }
         return object;
     };
@@ -725,6 +759,166 @@ $root.ClientConnectMsg = (function() {
     };
 
     return ClientConnectMsg;
+})();
+
+$root.ClientRefreshSessionsMsg = (function() {
+
+    /**
+     * Properties of a ClientRefreshSessionsMsg.
+     * @exports IClientRefreshSessionsMsg
+     * @interface IClientRefreshSessionsMsg
+     */
+
+    /**
+     * Constructs a new ClientRefreshSessionsMsg.
+     * @exports ClientRefreshSessionsMsg
+     * @classdesc Refresh Master Server list
+     * @implements IClientRefreshSessionsMsg
+     * @constructor
+     * @param {IClientRefreshSessionsMsg=} [properties] Properties to set
+     */
+    function ClientRefreshSessionsMsg(properties) {
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * Creates a new ClientRefreshSessionsMsg instance using the specified properties.
+     * @function create
+     * @memberof ClientRefreshSessionsMsg
+     * @static
+     * @param {IClientRefreshSessionsMsg=} [properties] Properties to set
+     * @returns {ClientRefreshSessionsMsg} ClientRefreshSessionsMsg instance
+     */
+    ClientRefreshSessionsMsg.create = function create(properties) {
+        return new ClientRefreshSessionsMsg(properties);
+    };
+
+    /**
+     * Encodes the specified ClientRefreshSessionsMsg message. Does not implicitly {@link ClientRefreshSessionsMsg.verify|verify} messages.
+     * @function encode
+     * @memberof ClientRefreshSessionsMsg
+     * @static
+     * @param {IClientRefreshSessionsMsg} message ClientRefreshSessionsMsg message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ClientRefreshSessionsMsg.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        return writer;
+    };
+
+    /**
+     * Encodes the specified ClientRefreshSessionsMsg message, length delimited. Does not implicitly {@link ClientRefreshSessionsMsg.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof ClientRefreshSessionsMsg
+     * @static
+     * @param {IClientRefreshSessionsMsg} message ClientRefreshSessionsMsg message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ClientRefreshSessionsMsg.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a ClientRefreshSessionsMsg message from the specified reader or buffer.
+     * @function decode
+     * @memberof ClientRefreshSessionsMsg
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {ClientRefreshSessionsMsg} ClientRefreshSessionsMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ClientRefreshSessionsMsg.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ClientRefreshSessionsMsg();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a ClientRefreshSessionsMsg message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof ClientRefreshSessionsMsg
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {ClientRefreshSessionsMsg} ClientRefreshSessionsMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ClientRefreshSessionsMsg.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a ClientRefreshSessionsMsg message.
+     * @function verify
+     * @memberof ClientRefreshSessionsMsg
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    ClientRefreshSessionsMsg.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        return null;
+    };
+
+    /**
+     * Creates a ClientRefreshSessionsMsg message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof ClientRefreshSessionsMsg
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {ClientRefreshSessionsMsg} ClientRefreshSessionsMsg
+     */
+    ClientRefreshSessionsMsg.fromObject = function fromObject(object) {
+        if (object instanceof $root.ClientRefreshSessionsMsg)
+            return object;
+        return new $root.ClientRefreshSessionsMsg();
+    };
+
+    /**
+     * Creates a plain object from a ClientRefreshSessionsMsg message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof ClientRefreshSessionsMsg
+     * @static
+     * @param {ClientRefreshSessionsMsg} message ClientRefreshSessionsMsg
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    ClientRefreshSessionsMsg.toObject = function toObject() {
+        return {};
+    };
+
+    /**
+     * Converts this ClientRefreshSessionsMsg to JSON.
+     * @function toJSON
+     * @memberof ClientRefreshSessionsMsg
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    ClientRefreshSessionsMsg.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    return ClientRefreshSessionsMsg;
 })();
 
 $root.ServerWelcomeMsg = (function() {

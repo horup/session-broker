@@ -44,7 +44,11 @@ const Index = ()=>{
     }
 
     const refreshClick = ()=>{
+        const msg = new ClientMsg({
+            refreshSessions:{}
+        })
 
+        ws.send(ClientMsg.encode(msg).finish());
     }
 
     React.useEffect(()=>{
