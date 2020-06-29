@@ -52,3 +52,9 @@ export async function getClientIds():Promise<number[]>
     
     return p;
 }
+
+export async function getClientSessionId(clientId)
+{
+    const c = await getClient(clientId);
+    return c.session;
+}

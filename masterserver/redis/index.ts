@@ -10,4 +10,5 @@ export * from './disconnect';
 export * from './session';
 export * from './join';
 export * from './client';
+export * from './app';
 

@@ -3,6 +3,7 @@ import "google/protobuf/any.proto";
 
 message ServerMsg {
     oneof msg {
+        ServerAppMsg appMsg = 1;
         ServerWelcomeMsg welcomeMsg = 100;
         ServerSessionAcceptMsg sessionAccept = 101;
         ServerSessionsMsg sessions = 102;
@@ -11,6 +12,7 @@ message ServerMsg {
 
 message ClientMsg {
     oneof msg {
+        ClientAppMsg appMsg = 1;
         ClientConnectMsg connect = 100;
         ClientJoinSessionMsg joinSession = 101;
         ClientCreateSessionMsg createSession = 102;
@@ -50,10 +52,15 @@ message ServerSessionAcceptMsg {
     uint32 ownerId = 2;
     string name = 3;
 }
+message ClientAppMsg {
+    uint32 to = 1;
+    bytes data = 2;
+    bool loopback = 3;
+}
 
-/** Broadcast app message */
-message BroadcastAppMsg {
-    google.protobuf.Any data = 1;
+message ServerAppMsg {
+    uint32 from = 1;
+    bytes data = 2;
 }
 
 message Session {

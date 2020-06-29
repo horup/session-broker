@@ -1,9 +1,10 @@
 import * as WebSocket from 'ws';
 import config from '../config';
 import {info as _info} from '../log';
-import {ClientMsg, ServerMsg} from '../proto';
+import {ClientMsg, ServerMsg} from '../../shared';
 import { Reader } from 'protobufjs';
 import * as redis from '../redis';
+import { Client } from '../redis';
 
 const info = _info.extend('client-manager');
 
@@ -13,6 +14,7 @@ const wss = new WebSocket.Server({
 
 info(`Starting WebSocket server on port ${wss.options.port}`);
 
+const localClients = new Map<number, Client>();
 const localClientIds = new Map<WebSocket, number>();
 const localClientSockets = new Map<number, WebSocket>();
 
@@ -62,10 +64,34 @@ redis.subscribeSessionAccept((sessionAccept)=>{
         })
 
         redis.setClient(clientId, {id:clientId, session:sessionAccept.sessionId});
-
         ws.send(ServerMsg.encode(serverMsg).finish());
     }
 })
+
+redis.subscribeSessionCreated(async (sessionCreated)=>{
+    if (config.ID == sessionCreated.nodeId)
+    {
+        info(`subscribed to local session with id ${sessionCreated.sessionId}`);
+        redis.subscribeApp(sessionCreated.sessionId, app=>{
+            // TODO: send data from local node to local or remote node, depending on client
+        });
+    }
+})
+
+/*
+async function app(app:redis.App)
+{
+    const ws = localClientSockets.get(app.fromClientId);
+    if (app.loopback)
+    {
+        ws.send(ServerMsg.encode({appMsg:{
+            data:app.data,
+            from:app.fromClientId
+        }}))
+    }
+}*/
+
+
 
 async function sendSessions(ws:WebSocket)
 {
@@ -84,8 +110,7 @@ async function sendSessions(ws:WebSocket)
 wss.on('connection', (ws)=>{
     let clientId = undefined as number;
     ws.on('message', async (data)=>{
-        const r = new Reader(data as any);
-        const msg = ClientMsg.decode(r);
+        const msg = ClientMsg.decode(data as any);
         if (msg.connect)
         {
             clientId = await redis.newId();
@@ -102,11 +127,23 @@ wss.on('connection', (ws)=>{
         }
         else if (msg.joinSession)
         {
-            const sessionid = msg.joinSession.sessionId;
-            if (sessionid != null)
+            const sessionId = msg.joinSession.sessionId;
+            if (sessionId != null)
             {
-                redis.publishJoin({sessionId:sessionid as number, clientId:clientId})
+                redis.publishJoin({sessionId:sessionId as number, clientId:clientId})
             }
+        }
+        else if (msg.appMsg)
+        {
+            // TODO: await might be slow, caching could be needed to improve
+            const sessionId = await redis.getClientSessionId(clientId);
+            redis.publishApp({
+                data:msg.appMsg.data,
+                fromClientId:clientId,
+                toClientId:msg.appMsg.to,
+                loopback:msg.appMsg.loopback,
+                sessionId:sessionId
+            })
         }
         else if (msg.refreshSessions)
         {

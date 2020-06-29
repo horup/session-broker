@@ -48,6 +48,32 @@ export async function publishCreateSession(session:CreateSession)
     const res = await redis.publish("sessioncreate", JSON.stringify(session));
 }
 
+export interface SessionCreated
+{
+    sessionId:number;
+    name:string;
+    owner:number;
+    nodeId:string;
+}
+
+
+export function subscribeSessionCreated(f:(s:SessionCreated)=>any)
+{
+    subscriber.subscribe("sessioncreated");
+    subscriber.on('message', (channel, value)=>{
+        if (channel == 'sessioncreated')
+            f(JSON.parse(value));
+    });
+}
+
+export async function publishSessionCreated(session:SessionCreated)
+{
+    const res = await redis.publish("sessioncreated", JSON.stringify(session));
+}
+
+
+
+
 
 export interface Session
 {

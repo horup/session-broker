@@ -8,21 +8,30 @@ redis.subscribeCreateSession(async (createSession)=>{
     if (config.ID == createSession.nodeId)
     {
         const sessionId = await redis.newId();
-        info(`session created with ${JSON.stringify(createSession)}`);
-        redis.publishSessionAccept({
-            clientId:createSession.owner,
-            owner:createSession.owner,
-            sessionId:sessionId,
-            name:createSession.name
-        })
+        info(`session created with ${JSON.stringify(createSession)} on node ${config.ID}`);
 
-        redis.setSession({
+        await redis.setSession({
             id:sessionId,
             name:createSession.name,
             owner:createSession.owner,
             password:createSession.password,
             nodeId:config.ID
         })
+
+        await redis.publishSessionAccept({
+            clientId:createSession.owner,
+            owner:createSession.owner,
+            sessionId:sessionId,
+            name:createSession.name
+        })
+
+        await redis.publishSessionCreated({
+            sessionId:sessionId,
+            name:createSession.name,
+            owner:createSession.owner,
+            nodeId:createSession.nodeId
+        });
+      
     }
 })
 

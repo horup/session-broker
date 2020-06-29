@@ -2,6 +2,9 @@ import * as $protobuf from "protobufjs";
 /** Properties of a ServerMsg. */
 export interface IServerMsg {
 
+    /** ServerMsg appMsg */
+    appMsg?: (IServerAppMsg|null);
+
     /** ServerMsg welcomeMsg */
     welcomeMsg?: (IServerWelcomeMsg|null);
 
@@ -21,6 +24,9 @@ export class ServerMsg implements IServerMsg {
      */
     constructor(properties?: IServerMsg);
 
+    /** ServerMsg appMsg. */
+    public appMsg?: (IServerAppMsg|null);
+
     /** ServerMsg welcomeMsg. */
     public welcomeMsg?: (IServerWelcomeMsg|null);
 
@@ -31,7 +37,7 @@ export class ServerMsg implements IServerMsg {
     public sessions?: (IServerSessionsMsg|null);
 
     /** ServerMsg msg. */
-    public msg?: ("welcomeMsg"|"sessionAccept"|"sessions");
+    public msg?: ("appMsg"|"welcomeMsg"|"sessionAccept"|"sessions");
 
     /**
      * Creates a new ServerMsg instance using the specified properties.
@@ -107,6 +113,9 @@ export class ServerMsg implements IServerMsg {
 /** Properties of a ClientMsg. */
 export interface IClientMsg {
 
+    /** ClientMsg appMsg */
+    appMsg?: (IClientAppMsg|null);
+
     /** ClientMsg connect */
     connect?: (IClientConnectMsg|null);
 
@@ -129,6 +138,9 @@ export class ClientMsg implements IClientMsg {
      */
     constructor(properties?: IClientMsg);
 
+    /** ClientMsg appMsg. */
+    public appMsg?: (IClientAppMsg|null);
+
     /** ClientMsg connect. */
     public connect?: (IClientConnectMsg|null);
 
@@ -142,7 +154,7 @@ export class ClientMsg implements IClientMsg {
     public refreshSessions?: (IClientRefreshSessionsMsg|null);
 
     /** ClientMsg msg. */
-    public msg?: ("connect"|"joinSession"|"createSession"|"refreshSessions");
+    public msg?: ("appMsg"|"connect"|"joinSession"|"createSession"|"refreshSessions");
 
     /**
      * Creates a new ClientMsg instance using the specified properties.
@@ -761,91 +773,199 @@ export class ServerSessionAcceptMsg implements IServerSessionAcceptMsg {
     public toJSON(): { [k: string]: any };
 }
 
-/** Properties of a BroadcastAppMsg. */
-export interface IBroadcastAppMsg {
+/** Properties of a ClientAppMsg. */
+export interface IClientAppMsg {
 
-    /** BroadcastAppMsg data */
-    data?: (google.protobuf.IAny|null);
+    /** ClientAppMsg to */
+    to?: (number|null);
+
+    /** ClientAppMsg data */
+    data?: (Uint8Array|null);
+
+    /** ClientAppMsg loopback */
+    loopback?: (boolean|null);
 }
 
-/** Broadcast app message */
-export class BroadcastAppMsg implements IBroadcastAppMsg {
+/** Represents a ClientAppMsg. */
+export class ClientAppMsg implements IClientAppMsg {
 
     /**
-     * Constructs a new BroadcastAppMsg.
+     * Constructs a new ClientAppMsg.
      * @param [properties] Properties to set
      */
-    constructor(properties?: IBroadcastAppMsg);
+    constructor(properties?: IClientAppMsg);
 
-    /** BroadcastAppMsg data. */
-    public data?: (google.protobuf.IAny|null);
+    /** ClientAppMsg to. */
+    public to: number;
+
+    /** ClientAppMsg data. */
+    public data: Uint8Array;
+
+    /** ClientAppMsg loopback. */
+    public loopback: boolean;
 
     /**
-     * Creates a new BroadcastAppMsg instance using the specified properties.
+     * Creates a new ClientAppMsg instance using the specified properties.
      * @param [properties] Properties to set
-     * @returns BroadcastAppMsg instance
+     * @returns ClientAppMsg instance
      */
-    public static create(properties?: IBroadcastAppMsg): BroadcastAppMsg;
+    public static create(properties?: IClientAppMsg): ClientAppMsg;
 
     /**
-     * Encodes the specified BroadcastAppMsg message. Does not implicitly {@link BroadcastAppMsg.verify|verify} messages.
-     * @param message BroadcastAppMsg message or plain object to encode
+     * Encodes the specified ClientAppMsg message. Does not implicitly {@link ClientAppMsg.verify|verify} messages.
+     * @param message ClientAppMsg message or plain object to encode
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encode(message: IBroadcastAppMsg, writer?: $protobuf.Writer): $protobuf.Writer;
+    public static encode(message: IClientAppMsg, writer?: $protobuf.Writer): $protobuf.Writer;
 
     /**
-     * Encodes the specified BroadcastAppMsg message, length delimited. Does not implicitly {@link BroadcastAppMsg.verify|verify} messages.
-     * @param message BroadcastAppMsg message or plain object to encode
+     * Encodes the specified ClientAppMsg message, length delimited. Does not implicitly {@link ClientAppMsg.verify|verify} messages.
+     * @param message ClientAppMsg message or plain object to encode
      * @param [writer] Writer to encode to
      * @returns Writer
      */
-    public static encodeDelimited(message: IBroadcastAppMsg, writer?: $protobuf.Writer): $protobuf.Writer;
+    public static encodeDelimited(message: IClientAppMsg, writer?: $protobuf.Writer): $protobuf.Writer;
 
     /**
-     * Decodes a BroadcastAppMsg message from the specified reader or buffer.
+     * Decodes a ClientAppMsg message from the specified reader or buffer.
      * @param reader Reader or buffer to decode from
      * @param [length] Message length if known beforehand
-     * @returns BroadcastAppMsg
+     * @returns ClientAppMsg
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): BroadcastAppMsg;
+    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ClientAppMsg;
 
     /**
-     * Decodes a BroadcastAppMsg message from the specified reader or buffer, length delimited.
+     * Decodes a ClientAppMsg message from the specified reader or buffer, length delimited.
      * @param reader Reader or buffer to decode from
-     * @returns BroadcastAppMsg
+     * @returns ClientAppMsg
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): BroadcastAppMsg;
+    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ClientAppMsg;
 
     /**
-     * Verifies a BroadcastAppMsg message.
+     * Verifies a ClientAppMsg message.
      * @param message Plain object to verify
      * @returns `null` if valid, otherwise the reason why it is not
      */
     public static verify(message: { [k: string]: any }): (string|null);
 
     /**
-     * Creates a BroadcastAppMsg message from a plain object. Also converts values to their respective internal types.
+     * Creates a ClientAppMsg message from a plain object. Also converts values to their respective internal types.
      * @param object Plain object
-     * @returns BroadcastAppMsg
+     * @returns ClientAppMsg
      */
-    public static fromObject(object: { [k: string]: any }): BroadcastAppMsg;
+    public static fromObject(object: { [k: string]: any }): ClientAppMsg;
 
     /**
-     * Creates a plain object from a BroadcastAppMsg message. Also converts values to other types if specified.
-     * @param message BroadcastAppMsg
+     * Creates a plain object from a ClientAppMsg message. Also converts values to other types if specified.
+     * @param message ClientAppMsg
      * @param [options] Conversion options
      * @returns Plain object
      */
-    public static toObject(message: BroadcastAppMsg, options?: $protobuf.IConversionOptions): { [k: string]: any };
+    public static toObject(message: ClientAppMsg, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
     /**
-     * Converts this BroadcastAppMsg to JSON.
+     * Converts this ClientAppMsg to JSON.
+     * @returns JSON object
+     */
+    public toJSON(): { [k: string]: any };
+}
+
+/** Properties of a ServerAppMsg. */
+export interface IServerAppMsg {
+
+    /** ServerAppMsg from */
+    from?: (number|null);
+
+    /** ServerAppMsg data */
+    data?: (Uint8Array|null);
+}
+
+/** Represents a ServerAppMsg. */
+export class ServerAppMsg implements IServerAppMsg {
+
+    /**
+     * Constructs a new ServerAppMsg.
+     * @param [properties] Properties to set
+     */
+    constructor(properties?: IServerAppMsg);
+
+    /** ServerAppMsg from. */
+    public from: number;
+
+    /** ServerAppMsg data. */
+    public data: Uint8Array;
+
+    /**
+     * Creates a new ServerAppMsg instance using the specified properties.
+     * @param [properties] Properties to set
+     * @returns ServerAppMsg instance
+     */
+    public static create(properties?: IServerAppMsg): ServerAppMsg;
+
+    /**
+     * Encodes the specified ServerAppMsg message. Does not implicitly {@link ServerAppMsg.verify|verify} messages.
+     * @param message ServerAppMsg message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encode(message: IServerAppMsg, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Encodes the specified ServerAppMsg message, length delimited. Does not implicitly {@link ServerAppMsg.verify|verify} messages.
+     * @param message ServerAppMsg message or plain object to encode
+     * @param [writer] Writer to encode to
+     * @returns Writer
+     */
+    public static encodeDelimited(message: IServerAppMsg, writer?: $protobuf.Writer): $protobuf.Writer;
+
+    /**
+     * Decodes a ServerAppMsg message from the specified reader or buffer.
+     * @param reader Reader or buffer to decode from
+     * @param [length] Message length if known beforehand
+     * @returns ServerAppMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ServerAppMsg;
+
+    /**
+     * Decodes a ServerAppMsg message from the specified reader or buffer, length delimited.
+     * @param reader Reader or buffer to decode from
+     * @returns ServerAppMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ServerAppMsg;
+
+    /**
+     * Verifies a ServerAppMsg message.
+     * @param message Plain object to verify
+     * @returns `null` if valid, otherwise the reason why it is not
+     */
+    public static verify(message: { [k: string]: any }): (string|null);
+
+    /**
+     * Creates a ServerAppMsg message from a plain object. Also converts values to their respective internal types.
+     * @param object Plain object
+     * @returns ServerAppMsg
+     */
+    public static fromObject(object: { [k: string]: any }): ServerAppMsg;
+
+    /**
+     * Creates a plain object from a ServerAppMsg message. Also converts values to other types if specified.
+     * @param message ServerAppMsg
+     * @param [options] Conversion options
+     * @returns Plain object
+     */
+    public static toObject(message: ServerAppMsg, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+    /**
+     * Converts this ServerAppMsg to JSON.
      * @returns JSON object
      */
     public toJSON(): { [k: string]: any };

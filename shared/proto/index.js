@@ -15,6 +15,7 @@ $root.ServerMsg = (function() {
      * Properties of a ServerMsg.
      * @exports IServerMsg
      * @interface IServerMsg
+     * @property {IServerAppMsg|null} [appMsg] ServerMsg appMsg
      * @property {IServerWelcomeMsg|null} [welcomeMsg] ServerMsg welcomeMsg
      * @property {IServerSessionAcceptMsg|null} [sessionAccept] ServerMsg sessionAccept
      * @property {IServerSessionsMsg|null} [sessions] ServerMsg sessions
@@ -34,6 +35,14 @@ $root.ServerMsg = (function() {
                 if (properties[keys[i]] != null)
                     this[keys[i]] = properties[keys[i]];
     }
+
+    /**
+     * ServerMsg appMsg.
+     * @member {IServerAppMsg|null|undefined} appMsg
+     * @memberof ServerMsg
+     * @instance
+     */
+    ServerMsg.prototype.appMsg = null;
 
     /**
      * ServerMsg welcomeMsg.
@@ -64,12 +73,12 @@ $root.ServerMsg = (function() {
 
     /**
      * ServerMsg msg.
-     * @member {"welcomeMsg"|"sessionAccept"|"sessions"|undefined} msg
+     * @member {"appMsg"|"welcomeMsg"|"sessionAccept"|"sessions"|undefined} msg
      * @memberof ServerMsg
      * @instance
      */
     Object.defineProperty(ServerMsg.prototype, "msg", {
-        get: $util.oneOfGetter($oneOfFields = ["welcomeMsg", "sessionAccept", "sessions"]),
+        get: $util.oneOfGetter($oneOfFields = ["appMsg", "welcomeMsg", "sessionAccept", "sessions"]),
         set: $util.oneOfSetter($oneOfFields)
     });
 
@@ -97,6 +106,8 @@ $root.ServerMsg = (function() {
     ServerMsg.encode = function encode(message, writer) {
         if (!writer)
             writer = $Writer.create();
+        if (message.appMsg != null && Object.hasOwnProperty.call(message, "appMsg"))
+            $root.ServerAppMsg.encode(message.appMsg, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
         if (message.welcomeMsg != null && Object.hasOwnProperty.call(message, "welcomeMsg"))
             $root.ServerWelcomeMsg.encode(message.welcomeMsg, writer.uint32(/* id 100, wireType 2 =*/802).fork()).ldelim();
         if (message.sessionAccept != null && Object.hasOwnProperty.call(message, "sessionAccept"))
@@ -137,6 +148,9 @@ $root.ServerMsg = (function() {
         while (reader.pos < end) {
             var tag = reader.uint32();
             switch (tag >>> 3) {
+            case 1:
+                message.appMsg = $root.ServerAppMsg.decode(reader, reader.uint32());
+                break;
             case 100:
                 message.welcomeMsg = $root.ServerWelcomeMsg.decode(reader, reader.uint32());
                 break;
@@ -182,7 +196,17 @@ $root.ServerMsg = (function() {
         if (typeof message !== "object" || message === null)
             return "object expected";
         var properties = {};
+        if (message.appMsg != null && message.hasOwnProperty("appMsg")) {
+            properties.msg = 1;
+            {
+                var error = $root.ServerAppMsg.verify(message.appMsg);
+                if (error)
+                    return "appMsg." + error;
+            }
+        }
         if (message.welcomeMsg != null && message.hasOwnProperty("welcomeMsg")) {
+            if (properties.msg === 1)
+                return "msg: multiple values";
             properties.msg = 1;
             {
                 var error = $root.ServerWelcomeMsg.verify(message.welcomeMsg);
@@ -225,6 +249,11 @@ $root.ServerMsg = (function() {
         if (object instanceof $root.ServerMsg)
             return object;
         var message = new $root.ServerMsg();
+        if (object.appMsg != null) {
+            if (typeof object.appMsg !== "object")
+                throw TypeError(".ServerMsg.appMsg: object expected");
+            message.appMsg = $root.ServerAppMsg.fromObject(object.appMsg);
+        }
         if (object.welcomeMsg != null) {
             if (typeof object.welcomeMsg !== "object")
                 throw TypeError(".ServerMsg.welcomeMsg: object expected");
@@ -256,6 +285,11 @@ $root.ServerMsg = (function() {
         if (!options)
             options = {};
         var object = {};
+        if (message.appMsg != null && message.hasOwnProperty("appMsg")) {
+            object.appMsg = $root.ServerAppMsg.toObject(message.appMsg, options);
+            if (options.oneofs)
+                object.msg = "appMsg";
+        }
         if (message.welcomeMsg != null && message.hasOwnProperty("welcomeMsg")) {
             object.welcomeMsg = $root.ServerWelcomeMsg.toObject(message.welcomeMsg, options);
             if (options.oneofs)
@@ -294,6 +328,7 @@ $root.ClientMsg = (function() {
      * Properties of a ClientMsg.
      * @exports IClientMsg
      * @interface IClientMsg
+     * @property {IClientAppMsg|null} [appMsg] ClientMsg appMsg
      * @property {IClientConnectMsg|null} [connect] ClientMsg connect
      * @property {IClientJoinSessionMsg|null} [joinSession] ClientMsg joinSession
      * @property {IClientCreateSessionMsg|null} [createSession] ClientMsg createSession
@@ -314,6 +349,14 @@ $root.ClientMsg = (function() {
                 if (properties[keys[i]] != null)
                     this[keys[i]] = properties[keys[i]];
     }
+
+    /**
+     * ClientMsg appMsg.
+     * @member {IClientAppMsg|null|undefined} appMsg
+     * @memberof ClientMsg
+     * @instance
+     */
+    ClientMsg.prototype.appMsg = null;
 
     /**
      * ClientMsg connect.
@@ -352,12 +395,12 @@ $root.ClientMsg = (function() {
 
     /**
      * ClientMsg msg.
-     * @member {"connect"|"joinSession"|"createSession"|"refreshSessions"|undefined} msg
+     * @member {"appMsg"|"connect"|"joinSession"|"createSession"|"refreshSessions"|undefined} msg
      * @memberof ClientMsg
      * @instance
      */
     Object.defineProperty(ClientMsg.prototype, "msg", {
-        get: $util.oneOfGetter($oneOfFields = ["connect", "joinSession", "createSession", "refreshSessions"]),
+        get: $util.oneOfGetter($oneOfFields = ["appMsg", "connect", "joinSession", "createSession", "refreshSessions"]),
         set: $util.oneOfSetter($oneOfFields)
     });
 
@@ -385,6 +428,8 @@ $root.ClientMsg = (function() {
     ClientMsg.encode = function encode(message, writer) {
         if (!writer)
             writer = $Writer.create();
+        if (message.appMsg != null && Object.hasOwnProperty.call(message, "appMsg"))
+            $root.ClientAppMsg.encode(message.appMsg, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
         if (message.connect != null && Object.hasOwnProperty.call(message, "connect"))
             $root.ClientConnectMsg.encode(message.connect, writer.uint32(/* id 100, wireType 2 =*/802).fork()).ldelim();
         if (message.joinSession != null && Object.hasOwnProperty.call(message, "joinSession"))
@@ -427,6 +472,9 @@ $root.ClientMsg = (function() {
         while (reader.pos < end) {
             var tag = reader.uint32();
             switch (tag >>> 3) {
+            case 1:
+                message.appMsg = $root.ClientAppMsg.decode(reader, reader.uint32());
+                break;
             case 100:
                 message.connect = $root.ClientConnectMsg.decode(reader, reader.uint32());
                 break;
@@ -475,7 +523,17 @@ $root.ClientMsg = (function() {
         if (typeof message !== "object" || message === null)
             return "object expected";
         var properties = {};
+        if (message.appMsg != null && message.hasOwnProperty("appMsg")) {
+            properties.msg = 1;
+            {
+                var error = $root.ClientAppMsg.verify(message.appMsg);
+                if (error)
+                    return "appMsg." + error;
+            }
+        }
         if (message.connect != null && message.hasOwnProperty("connect")) {
+            if (properties.msg === 1)
+                return "msg: multiple values";
             properties.msg = 1;
             {
                 var error = $root.ClientConnectMsg.verify(message.connect);
@@ -528,6 +586,11 @@ $root.ClientMsg = (function() {
         if (object instanceof $root.ClientMsg)
             return object;
         var message = new $root.ClientMsg();
+        if (object.appMsg != null) {
+            if (typeof object.appMsg !== "object")
+                throw TypeError(".ClientMsg.appMsg: object expected");
+            message.appMsg = $root.ClientAppMsg.fromObject(object.appMsg);
+        }
         if (object.connect != null) {
             if (typeof object.connect !== "object")
                 throw TypeError(".ClientMsg.connect: object expected");
@@ -564,6 +627,11 @@ $root.ClientMsg = (function() {
         if (!options)
             options = {};
         var object = {};
+        if (message.appMsg != null && message.hasOwnProperty("appMsg")) {
+            object.appMsg = $root.ClientAppMsg.toObject(message.appMsg, options);
+            if (options.oneofs)
+                object.msg = "appMsg";
+        }
         if (message.connect != null && message.hasOwnProperty("connect")) {
             object.connect = $root.ClientConnectMsg.toObject(message.connect, options);
             if (options.oneofs)
@@ -1737,24 +1805,26 @@ $root.ServerSessionAcceptMsg = (function() {
     return ServerSessionAcceptMsg;
 })();
 
-$root.BroadcastAppMsg = (function() {
+$root.ClientAppMsg = (function() {
 
     /**
-     * Properties of a BroadcastAppMsg.
-     * @exports IBroadcastAppMsg
-     * @interface IBroadcastAppMsg
-     * @property {google.protobuf.IAny|null} [data] BroadcastAppMsg data
+     * Properties of a ClientAppMsg.
+     * @exports IClientAppMsg
+     * @interface IClientAppMsg
+     * @property {number|null} [to] ClientAppMsg to
+     * @property {Uint8Array|null} [data] ClientAppMsg data
+     * @property {boolean|null} [loopback] ClientAppMsg loopback
      */
 
     /**
-     * Constructs a new BroadcastAppMsg.
-     * @exports BroadcastAppMsg
-     * @classdesc Broadcast app message
-     * @implements IBroadcastAppMsg
+     * Constructs a new ClientAppMsg.
+     * @exports ClientAppMsg
+     * @classdesc Represents a ClientAppMsg.
+     * @implements IClientAppMsg
      * @constructor
-     * @param {IBroadcastAppMsg=} [properties] Properties to set
+     * @param {IClientAppMsg=} [properties] Properties to set
      */
-    function BroadcastAppMsg(properties) {
+    function ClientAppMsg(properties) {
         if (properties)
             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                 if (properties[keys[i]] != null)
@@ -1762,75 +1832,101 @@ $root.BroadcastAppMsg = (function() {
     }
 
     /**
-     * BroadcastAppMsg data.
-     * @member {google.protobuf.IAny|null|undefined} data
-     * @memberof BroadcastAppMsg
+     * ClientAppMsg to.
+     * @member {number} to
+     * @memberof ClientAppMsg
      * @instance
      */
-    BroadcastAppMsg.prototype.data = null;
+    ClientAppMsg.prototype.to = 0;
 
     /**
-     * Creates a new BroadcastAppMsg instance using the specified properties.
-     * @function create
-     * @memberof BroadcastAppMsg
-     * @static
-     * @param {IBroadcastAppMsg=} [properties] Properties to set
-     * @returns {BroadcastAppMsg} BroadcastAppMsg instance
+     * ClientAppMsg data.
+     * @member {Uint8Array} data
+     * @memberof ClientAppMsg
+     * @instance
      */
-    BroadcastAppMsg.create = function create(properties) {
-        return new BroadcastAppMsg(properties);
+    ClientAppMsg.prototype.data = $util.newBuffer([]);
+
+    /**
+     * ClientAppMsg loopback.
+     * @member {boolean} loopback
+     * @memberof ClientAppMsg
+     * @instance
+     */
+    ClientAppMsg.prototype.loopback = false;
+
+    /**
+     * Creates a new ClientAppMsg instance using the specified properties.
+     * @function create
+     * @memberof ClientAppMsg
+     * @static
+     * @param {IClientAppMsg=} [properties] Properties to set
+     * @returns {ClientAppMsg} ClientAppMsg instance
+     */
+    ClientAppMsg.create = function create(properties) {
+        return new ClientAppMsg(properties);
     };
 
     /**
-     * Encodes the specified BroadcastAppMsg message. Does not implicitly {@link BroadcastAppMsg.verify|verify} messages.
+     * Encodes the specified ClientAppMsg message. Does not implicitly {@link ClientAppMsg.verify|verify} messages.
      * @function encode
-     * @memberof BroadcastAppMsg
+     * @memberof ClientAppMsg
      * @static
-     * @param {IBroadcastAppMsg} message BroadcastAppMsg message or plain object to encode
+     * @param {IClientAppMsg} message ClientAppMsg message or plain object to encode
      * @param {$protobuf.Writer} [writer] Writer to encode to
      * @returns {$protobuf.Writer} Writer
      */
-    BroadcastAppMsg.encode = function encode(message, writer) {
+    ClientAppMsg.encode = function encode(message, writer) {
         if (!writer)
             writer = $Writer.create();
+        if (message.to != null && Object.hasOwnProperty.call(message, "to"))
+            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.to);
         if (message.data != null && Object.hasOwnProperty.call(message, "data"))
-            $root.google.protobuf.Any.encode(message.data, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
+        if (message.loopback != null && Object.hasOwnProperty.call(message, "loopback"))
+            writer.uint32(/* id 3, wireType 0 =*/24).bool(message.loopback);
         return writer;
     };
 
     /**
-     * Encodes the specified BroadcastAppMsg message, length delimited. Does not implicitly {@link BroadcastAppMsg.verify|verify} messages.
+     * Encodes the specified ClientAppMsg message, length delimited. Does not implicitly {@link ClientAppMsg.verify|verify} messages.
      * @function encodeDelimited
-     * @memberof BroadcastAppMsg
+     * @memberof ClientAppMsg
      * @static
-     * @param {IBroadcastAppMsg} message BroadcastAppMsg message or plain object to encode
+     * @param {IClientAppMsg} message ClientAppMsg message or plain object to encode
      * @param {$protobuf.Writer} [writer] Writer to encode to
      * @returns {$protobuf.Writer} Writer
      */
-    BroadcastAppMsg.encodeDelimited = function encodeDelimited(message, writer) {
+    ClientAppMsg.encodeDelimited = function encodeDelimited(message, writer) {
         return this.encode(message, writer).ldelim();
     };
 
     /**
-     * Decodes a BroadcastAppMsg message from the specified reader or buffer.
+     * Decodes a ClientAppMsg message from the specified reader or buffer.
      * @function decode
-     * @memberof BroadcastAppMsg
+     * @memberof ClientAppMsg
      * @static
      * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
      * @param {number} [length] Message length if known beforehand
-     * @returns {BroadcastAppMsg} BroadcastAppMsg
+     * @returns {ClientAppMsg} ClientAppMsg
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    BroadcastAppMsg.decode = function decode(reader, length) {
+    ClientAppMsg.decode = function decode(reader, length) {
         if (!(reader instanceof $Reader))
             reader = $Reader.create(reader);
-        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.BroadcastAppMsg();
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ClientAppMsg();
         while (reader.pos < end) {
             var tag = reader.uint32();
             switch (tag >>> 3) {
             case 1:
-                message.data = $root.google.protobuf.Any.decode(reader, reader.uint32());
+                message.to = reader.uint32();
+                break;
+            case 2:
+                message.data = reader.bytes();
+                break;
+            case 3:
+                message.loopback = reader.bool();
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -1841,92 +1937,332 @@ $root.BroadcastAppMsg = (function() {
     };
 
     /**
-     * Decodes a BroadcastAppMsg message from the specified reader or buffer, length delimited.
+     * Decodes a ClientAppMsg message from the specified reader or buffer, length delimited.
      * @function decodeDelimited
-     * @memberof BroadcastAppMsg
+     * @memberof ClientAppMsg
      * @static
      * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @returns {BroadcastAppMsg} BroadcastAppMsg
+     * @returns {ClientAppMsg} ClientAppMsg
      * @throws {Error} If the payload is not a reader or valid buffer
      * @throws {$protobuf.util.ProtocolError} If required fields are missing
      */
-    BroadcastAppMsg.decodeDelimited = function decodeDelimited(reader) {
+    ClientAppMsg.decodeDelimited = function decodeDelimited(reader) {
         if (!(reader instanceof $Reader))
             reader = new $Reader(reader);
         return this.decode(reader, reader.uint32());
     };
 
     /**
-     * Verifies a BroadcastAppMsg message.
+     * Verifies a ClientAppMsg message.
      * @function verify
-     * @memberof BroadcastAppMsg
+     * @memberof ClientAppMsg
      * @static
      * @param {Object.<string,*>} message Plain object to verify
      * @returns {string|null} `null` if valid, otherwise the reason why it is not
      */
-    BroadcastAppMsg.verify = function verify(message) {
+    ClientAppMsg.verify = function verify(message) {
         if (typeof message !== "object" || message === null)
             return "object expected";
-        if (message.data != null && message.hasOwnProperty("data")) {
-            var error = $root.google.protobuf.Any.verify(message.data);
-            if (error)
-                return "data." + error;
-        }
+        if (message.to != null && message.hasOwnProperty("to"))
+            if (!$util.isInteger(message.to))
+                return "to: integer expected";
+        if (message.data != null && message.hasOwnProperty("data"))
+            if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
+                return "data: buffer expected";
+        if (message.loopback != null && message.hasOwnProperty("loopback"))
+            if (typeof message.loopback !== "boolean")
+                return "loopback: boolean expected";
         return null;
     };
 
     /**
-     * Creates a BroadcastAppMsg message from a plain object. Also converts values to their respective internal types.
+     * Creates a ClientAppMsg message from a plain object. Also converts values to their respective internal types.
      * @function fromObject
-     * @memberof BroadcastAppMsg
+     * @memberof ClientAppMsg
      * @static
      * @param {Object.<string,*>} object Plain object
-     * @returns {BroadcastAppMsg} BroadcastAppMsg
+     * @returns {ClientAppMsg} ClientAppMsg
      */
-    BroadcastAppMsg.fromObject = function fromObject(object) {
-        if (object instanceof $root.BroadcastAppMsg)
+    ClientAppMsg.fromObject = function fromObject(object) {
+        if (object instanceof $root.ClientAppMsg)
             return object;
-        var message = new $root.BroadcastAppMsg();
-        if (object.data != null) {
-            if (typeof object.data !== "object")
-                throw TypeError(".BroadcastAppMsg.data: object expected");
-            message.data = $root.google.protobuf.Any.fromObject(object.data);
+        var message = new $root.ClientAppMsg();
+        if (object.to != null)
+            message.to = object.to >>> 0;
+        if (object.data != null)
+            if (typeof object.data === "string")
+                $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
+            else if (object.data.length)
+                message.data = object.data;
+        if (object.loopback != null)
+            message.loopback = Boolean(object.loopback);
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a ClientAppMsg message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof ClientAppMsg
+     * @static
+     * @param {ClientAppMsg} message ClientAppMsg
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    ClientAppMsg.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.defaults) {
+            object.to = 0;
+            if (options.bytes === String)
+                object.data = "";
+            else {
+                object.data = [];
+                if (options.bytes !== Array)
+                    object.data = $util.newBuffer(object.data);
+            }
+            object.loopback = false;
+        }
+        if (message.to != null && message.hasOwnProperty("to"))
+            object.to = message.to;
+        if (message.data != null && message.hasOwnProperty("data"))
+            object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+        if (message.loopback != null && message.hasOwnProperty("loopback"))
+            object.loopback = message.loopback;
+        return object;
+    };
+
+    /**
+     * Converts this ClientAppMsg to JSON.
+     * @function toJSON
+     * @memberof ClientAppMsg
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    ClientAppMsg.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    return ClientAppMsg;
+})();
+
+$root.ServerAppMsg = (function() {
+
+    /**
+     * Properties of a ServerAppMsg.
+     * @exports IServerAppMsg
+     * @interface IServerAppMsg
+     * @property {number|null} [from] ServerAppMsg from
+     * @property {Uint8Array|null} [data] ServerAppMsg data
+     */
+
+    /**
+     * Constructs a new ServerAppMsg.
+     * @exports ServerAppMsg
+     * @classdesc Represents a ServerAppMsg.
+     * @implements IServerAppMsg
+     * @constructor
+     * @param {IServerAppMsg=} [properties] Properties to set
+     */
+    function ServerAppMsg(properties) {
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * ServerAppMsg from.
+     * @member {number} from
+     * @memberof ServerAppMsg
+     * @instance
+     */
+    ServerAppMsg.prototype.from = 0;
+
+    /**
+     * ServerAppMsg data.
+     * @member {Uint8Array} data
+     * @memberof ServerAppMsg
+     * @instance
+     */
+    ServerAppMsg.prototype.data = $util.newBuffer([]);
+
+    /**
+     * Creates a new ServerAppMsg instance using the specified properties.
+     * @function create
+     * @memberof ServerAppMsg
+     * @static
+     * @param {IServerAppMsg=} [properties] Properties to set
+     * @returns {ServerAppMsg} ServerAppMsg instance
+     */
+    ServerAppMsg.create = function create(properties) {
+        return new ServerAppMsg(properties);
+    };
+
+    /**
+     * Encodes the specified ServerAppMsg message. Does not implicitly {@link ServerAppMsg.verify|verify} messages.
+     * @function encode
+     * @memberof ServerAppMsg
+     * @static
+     * @param {IServerAppMsg} message ServerAppMsg message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerAppMsg.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.from != null && Object.hasOwnProperty.call(message, "from"))
+            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.from);
+        if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+            writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
+        return writer;
+    };
+
+    /**
+     * Encodes the specified ServerAppMsg message, length delimited. Does not implicitly {@link ServerAppMsg.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof ServerAppMsg
+     * @static
+     * @param {IServerAppMsg} message ServerAppMsg message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerAppMsg.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a ServerAppMsg message from the specified reader or buffer.
+     * @function decode
+     * @memberof ServerAppMsg
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {ServerAppMsg} ServerAppMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerAppMsg.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerAppMsg();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                message.from = reader.uint32();
+                break;
+            case 2:
+                message.data = reader.bytes();
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
         }
         return message;
     };
 
     /**
-     * Creates a plain object from a BroadcastAppMsg message. Also converts values to other types if specified.
-     * @function toObject
-     * @memberof BroadcastAppMsg
+     * Decodes a ServerAppMsg message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof ServerAppMsg
      * @static
-     * @param {BroadcastAppMsg} message BroadcastAppMsg
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {ServerAppMsg} ServerAppMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerAppMsg.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a ServerAppMsg message.
+     * @function verify
+     * @memberof ServerAppMsg
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    ServerAppMsg.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.from != null && message.hasOwnProperty("from"))
+            if (!$util.isInteger(message.from))
+                return "from: integer expected";
+        if (message.data != null && message.hasOwnProperty("data"))
+            if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
+                return "data: buffer expected";
+        return null;
+    };
+
+    /**
+     * Creates a ServerAppMsg message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof ServerAppMsg
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {ServerAppMsg} ServerAppMsg
+     */
+    ServerAppMsg.fromObject = function fromObject(object) {
+        if (object instanceof $root.ServerAppMsg)
+            return object;
+        var message = new $root.ServerAppMsg();
+        if (object.from != null)
+            message.from = object.from >>> 0;
+        if (object.data != null)
+            if (typeof object.data === "string")
+                $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
+            else if (object.data.length)
+                message.data = object.data;
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a ServerAppMsg message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof ServerAppMsg
+     * @static
+     * @param {ServerAppMsg} message ServerAppMsg
      * @param {$protobuf.IConversionOptions} [options] Conversion options
      * @returns {Object.<string,*>} Plain object
      */
-    BroadcastAppMsg.toObject = function toObject(message, options) {
+    ServerAppMsg.toObject = function toObject(message, options) {
         if (!options)
             options = {};
         var object = {};
-        if (options.defaults)
-            object.data = null;
+        if (options.defaults) {
+            object.from = 0;
+            if (options.bytes === String)
+                object.data = "";
+            else {
+                object.data = [];
+                if (options.bytes !== Array)
+                    object.data = $util.newBuffer(object.data);
+            }
+        }
+        if (message.from != null && message.hasOwnProperty("from"))
+            object.from = message.from;
         if (message.data != null && message.hasOwnProperty("data"))
-            object.data = $root.google.protobuf.Any.toObject(message.data, options);
+            object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
         return object;
     };
 
     /**
-     * Converts this BroadcastAppMsg to JSON.
+     * Converts this ServerAppMsg to JSON.
      * @function toJSON
-     * @memberof BroadcastAppMsg
+     * @memberof ServerAppMsg
      * @instance
      * @returns {Object.<string,*>} JSON object
      */
-    BroadcastAppMsg.prototype.toJSON = function toJSON() {
+    ServerAppMsg.prototype.toJSON = function toJSON() {
         return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
     };
 
-    return BroadcastAppMsg;
+    return ServerAppMsg;
 })();
 
 $root.Session = (function() {
