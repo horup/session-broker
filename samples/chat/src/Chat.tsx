@@ -23,7 +23,6 @@ const Index = ()=>{
     const [textBuffer, setTextBuffer] = React.useState("");
     const [chat, setChat] = React.useState("");
     const chatRef = React.useRef(chat);
-
     const submit = ()=>{
         client.sendAppMessageAsJson<AppMsg>({
             chat:{
@@ -36,6 +35,9 @@ const Index = ()=>{
 
     React.useEffect(()=>{
         client.onConnectionChange = (c, id)=>{setConnected(c), setClientId(id)};
+        client.onSessionsChange = (sessions)=>{
+            setSessions(sessions);
+        }
         client.onSessionChange = (id, name, owner)=>{
             setSessionId(id);
             setSessionName(name);

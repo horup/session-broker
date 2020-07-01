@@ -1,4 +1,4 @@
-import {ClientMsg, ServerMsg} from '../shared';
+import {ClientMsg, ServerMsg, ISession} from '../shared';
 export * from '../shared';
 
 export class MasterClient
@@ -9,10 +9,16 @@ export class MasterClient
     private _sessionOwnerId:number;
     private _sessionId:number;
     private _connected = false;
+    private _sessions = [] as ISession[]; 
 
     get clientId()
     {
         return this._clientId;
+    }
+
+    get sessions()
+    {
+        return this._sessions;
     }
 
     get sessionId()
@@ -64,6 +70,12 @@ export class MasterClient
                 this._sessionOwnerId = serverMsg.sessionAccept.ownerId;
                 this.onSessionChange(this.sessionId, this.sessionName, this.sessionOwnerId);
             }
+            else if (serverMsg.sessions)
+            {
+                const s = serverMsg.sessions.sessions;
+                this._sessions = s;
+                this.onSessionsChange(this.sessions);
+            }
             else if (serverMsg.appMsg)
             {
                 let te = new TextDecoder();
@@ -94,6 +106,7 @@ export class MasterClient
     onAppMsgFromJson = <AppMsg>(fromId:number, app:AppMsg)=>{}
     onConnectionChange = (connected:boolean, clientId:number)=>{}
     onSessionChange = (sessionId:number, sessionName:string, sessionOwner:number)=>{};
+    onSessionsChange = (sessions:ISession[]);
 
     private sendConnect():boolean
     {
