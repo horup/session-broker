@@ -22,6 +22,7 @@ const Index = ()=>{
     const [sessions, setSessions] = React.useState([] as ISession[]);
     const [textBuffer, setTextBuffer] = React.useState("");
     const [chat, setChat] = React.useState("");
+    const chatRef = React.useRef(chat);
 
     const submit = ()=>{
         client.sendAppMessageAsJson<AppMsg>({
@@ -48,8 +49,12 @@ const Index = ()=>{
                 }, undefined, true);
             }
         };
-        client.onMessage = (msg)=>{
-            console.log(msg);
+
+        client.onAppMsgFromJson = (fromId, msg:AppMsg)=>
+        {
+            const c = chatRef.current + `${msg.chat.id}:${msg.chat.text}\n`;
+            chatRef.current = c; //hack to avoid stale closure
+            setChat(c);
         }
         client.connect(`ws://localhost:8080`);
     }, [])

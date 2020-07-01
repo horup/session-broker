@@ -48,6 +48,8 @@ redis.subscribeDisconnect((clientId)=>{
     localClientSockets.delete(clientId);
 })
 
+const subscribedToSession = new Map<number, boolean>();
+
 redis.subscribeSessionAccept((sessionAccept)=>{
     info(`session accepted with ${JSON.stringify(sessionAccept)}`);
 
@@ -55,27 +57,49 @@ redis.subscribeSessionAccept((sessionAccept)=>{
     const ws = localClientSockets.get(clientId);
     if (ws != null)
     {
-        const serverMsg = new ServerMsg({
-            sessionAccept:{
-                name:sessionAccept.name,
-                ownerId:sessionAccept.owner,
-                sesionId:sessionAccept.sessionId
-            }
-        })
+        {
+            const serverMsg = new ServerMsg({
+                sessionAccept:{
+                    name:sessionAccept.name,
+                    ownerId:sessionAccept.owner,
+                    sesionId:sessionAccept.sessionId
+                }
+            })
 
-        redis.setClient(clientId, {id:clientId, session:sessionAccept.sessionId});
-        ws.send(ServerMsg.encode(serverMsg).finish());
+            redis.setClient(clientId, {id:clientId, session:sessionAccept.sessionId});
+            ws.send(ServerMsg.encode(serverMsg).finish());
+        }
+
+        // Local Client has joined a session, subscribe to it
+        if (!subscribedToSession.has(sessionAccept.sessionId))
+        {
+            info(`subscribed to local session with id ${sessionAccept.sessionId}`);
+            redis.subscribeApp(sessionAccept.sessionId, app=>{
+               
+                const msg = new ServerMsg({
+                    appMsg:{
+                        from:app.fromClientId,
+                        data:app.data
+                    }
+                });
+                const data = ServerMsg.encode(msg).finish();
+
+
+                ws.send(data);
+            });
+        }
     }
 })
 
+
 redis.subscribeSessionCreated(async (sessionCreated)=>{
-    if (config.ID == sessionCreated.nodeId)
+ /*   if (config.ID == sessionCreated.nodeId)
     {
         info(`subscribed to local session with id ${sessionCreated.sessionId}`);
         redis.subscribeApp(sessionCreated.sessionId, app=>{
             // TODO: send data from local node to local or remote node, depending on client
         });
-    }
+    }*/
 })
 
 /*
@@ -137,6 +161,7 @@ wss.on('connection', (ws)=>{
         {
             // TODO: await might be slow, caching could be needed to improve
             const sessionId = await redis.getClientSessionId(clientId);
+            //console.log(msg.appMsg.data.slice(0,4));
             redis.publishApp({
                 data:msg.appMsg.data,
                 fromClientId:clientId,

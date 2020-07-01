@@ -64,6 +64,14 @@ export class MasterClient
                 this._sessionOwnerId = serverMsg.sessionAccept.ownerId;
                 this.onSessionChange(this.sessionId, this.sessionName, this.sessionOwnerId);
             }
+            else if (serverMsg.appMsg)
+            {
+                let te = new TextDecoder();
+                let json = te.decode(serverMsg.appMsg.data);
+                const o = JSON.parse(json);
+                this.onAppMsgFromJson(serverMsg.appMsg.from, o);
+            }
+            
 
             this.onMessage(serverMsg);
         }
@@ -83,6 +91,7 @@ export class MasterClient
     }
 
     
+    onAppMsgFromJson = <AppMsg>(fromId:number, app:AppMsg)=>{}
     onConnectionChange = (connected:boolean, clientId:number)=>{}
     onSessionChange = (sessionId:number, sessionName:string, sessionOwner:number)=>{};
 

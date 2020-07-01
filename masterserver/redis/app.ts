@@ -5,7 +5,7 @@ export interface App
 {
     fromClientId:number;
     sessionId:number;
-    data:any;
+    data:Uint8Array;
     toClientId?:number;
     loopback?:boolean;
 }
@@ -24,7 +24,11 @@ export function subscribeApp(sessionId:number, f:(app:App)=>any)
     subscriber.on('message', (channel, value)=>{
         if (channel == r)
         {
-            f(JSON.parse(value));
+            const o = JSON.parse(value);
+
+            // Uint8Array lost during serialization
+            o.data = new Uint8Array(o.data.data);
+            f(o);
         }
     });
 }

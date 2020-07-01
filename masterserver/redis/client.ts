@@ -1,4 +1,4 @@
-import { redis } from "./redis";
+import { redis, subscriber } from "./redis";
 import { info } from "../log";
 
 export interface Client
@@ -57,4 +57,24 @@ export async function getClientSessionId(clientId)
 {
     const c = await getClient(clientId);
     return c.session;
+}
+
+export interface ClientMsg
+{
+    toclientId:number;
+    data:any;
+}
+
+export function subscribeClientMsg(clientId:number, f:(clientId:number, msg:ClientMsg)=>any)
+{
+    subscriber.subscribe(`client:${clientId}`);
+    subscriber.on('message', (channel, value)=>{
+        if (channel == `client:${clientId}`)
+            f(clientId, value);
+    });
+}
+
+export async function publishClientMsg(clientId:number, msg:ClientMsg)
+{
+    const res = await redis.publish(`client:${clientId}`, JSON.stringify(msg));
 }
