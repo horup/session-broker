@@ -66,6 +66,10 @@ const Index = ()=>{
         client.sendCreateSession(name);
     }
 
+    const joinClick = (sessionId:number, passwordProtected:boolean)=>{
+        client.sendJoinSession(sessionId);
+    }
+
     return <div>
         <div>
             {connected ? 'Connected' : 'Disconnected'} as {clientId != null ? clientId : "---"}
@@ -90,7 +94,7 @@ const Index = ()=>{
                                         {s.passwordProtected == true ? "X" : ""}
                                     </td>
                                     <td>
-                                    <button onClick={()=>0}>Join</button>
+                                    <button onClick={()=>joinClick(s.id, s.passwordProtected)}>Join</button>
                                     </td>
                                 </tr>
                     })}

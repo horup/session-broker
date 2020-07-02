@@ -150,6 +150,18 @@ export class MasterClient
         return true;
     }
 
+    public sendJoinSession(sessionId:number, password?:string)
+    {
+        this.send(new ClientMsg({
+            joinSession:{
+                sessionId:sessionId
+            }
+        }));
+
+
+        return true;
+    }
+
     onMessage = (serverMsg:ServerMsg)=>{};
 
     private send(clientMsg:ClientMsg)
