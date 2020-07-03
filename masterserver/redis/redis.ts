@@ -18,3 +18,9 @@ export async function newId()
     const newId = await redis.incr("nextid");
     return newId;
 }
+
+
+export function debug()
+{
+    
+}

@@ -89,6 +89,18 @@ export async function setSession(session:Session)
     redis.set(`session:${session.id}`, JSON.stringify(session), "ex", 30);
 }
 
+export async function getSession(sessionId:number):Promise<Session | undefined>
+{
+    const s = await redis.get(`session:${sessionId}`);
+    if (s != undefined)
+    {
+        return JSON.parse(s);
+    }
+
+    return undefined;
+}
+
+
 export async function getSessions():Promise<Session[]>
 {
     const res = [] as Session[];
@@ -101,6 +113,7 @@ export async function getSessions():Promise<Session[]>
 
     return res;
 }
+
 
 export async function getSessionIds():Promise<number[]>
 {
@@ -122,17 +135,6 @@ export async function getSessionIds():Promise<number[]>
     });
     
     return p;
-}
-
-export async function getSession(sessionId:number):Promise<Session | undefined>
-{
-    const s = await redis.get(`session:${sessionId}`);
-    if (s != undefined)
-    {
-        return JSON.parse(s);
-    }
-
-    return undefined;
 }
 
 export async function refreshSession(sessionId:number):Promise<any>

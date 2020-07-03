@@ -16,9 +16,9 @@ interface AppMsg
 
 const Index = ()=>{
     const [connected, setConnected] = React.useState(false);
-    const [clientId, setClientId] = React.useState(null as number);
+    const [clientId, setClientId] = React.useState(0);
     const [sessionName, setSessionName] = React.useState(null as string);
-    const [sessionId, setSessionId] = React.useState<number>();
+    const [sessionId, setSessionId] = React.useState<number>(0);
     const [sessions, setSessions] = React.useState([] as ISession[]);
     const [textBuffer, setTextBuffer] = React.useState("");
     const [chat, setChat] = React.useState("");
@@ -69,7 +69,6 @@ const Index = ()=>{
     const joinClick = (sessionId:number, passwordProtected:boolean)=>{
         client.sendJoinSession(sessionId);
     }
-
     return <div>
         <div>
             {connected ? 'Connected' : 'Disconnected'} as {clientId != null ? clientId : "---"}
@@ -77,7 +76,7 @@ const Index = ()=>{
             {sessionId && connected ? `Part of session ${sessionId} with name:'${sessionName}'` : ""}
         </div>
         {
-            sessionId == null ? 
+            sessionId == 0 ? 
             <div>
                 <button onClick={()=>createSessionClick()}>Create Session</button>
                 <table>

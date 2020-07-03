@@ -27,31 +27,55 @@ export async function getClient(clientId:number) : Promise<Client>
     return undefined;
 }
 
+
+export async function getClientIds(): Promise<number[]> {
+    const ids: number[] = [];
+    const p = new Promise<number[]>(res => {
+        const stream = redis.scanStream({ match: "client:*" });
+        stream.on('data', (keys: string[]) => {
+            for (const key of keys) {
+                const split = key.split(":");
+                const id = Number.parseInt(split[1]);
+                if (!Number.isNaN(id))
+                    ids.push(id);
+            }
+        })
+
+        stream.on('end', ()=>{
+            res(ids);
+        })
+    });
+
+    return p;
+}
+
+export async function getClients() : Promise<Client[]>
+{
+    const clients:Client[] = [];
+    const p = new Promise<Client[]>(async res=>{
+        const ids = await getClientIds();
+        const keys = ids.map(v=>"client:" + v);
+        if (keys.length > 0)
+        {
+            const cs = await redis.mget(keys);
+
+            for (const c of cs)
+            {
+                clients.push(JSON.parse(c));
+            }
+        }
+
+        res(clients);
+    })
+
+    return p;
+}
+
 export async function refreshClient(clientId:number) : Promise<any>
 {
     redis.expire(`client:${clientId}`, 30);
 }
 
-export async function getClientIds():Promise<number[]>
-{
-    const ids:number[] = [];
-    const p = new Promise<number[]>(res=>{
-        const stream = redis.scanStream({match:"client:*"});
-        stream.on('data', (keys:string[])=>{
-        for (const key of keys)
-        {
-            const split = key.split(":");
-            const id = Number.parseInt(split[1]);
-            if (!Number.isNaN(id))
-                ids.push(id);
-        }
-
-        res(ids);
-    })
-    });
-    
-    return p;
-}
 
 export async function getClientSessionId(clientId)
 {
@@ -59,11 +83,18 @@ export async function getClientSessionId(clientId)
     return c.session;
 }
 
+export async function getClientsOfSession(sessionid:number)
+{
+    const clients = await getClients();
+    return clients.filter(c=>c.session == sessionid);
+}
+
 export interface ClientMsg
 {
     toclientId:number;
     data:any;
 }
+
 
 export function subscribeClientMsg(clientId:number, f:(clientId:number, msg:ClientMsg)=>any)
 {

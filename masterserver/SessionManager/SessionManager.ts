@@ -72,15 +72,32 @@ async function tick()
             const client = await redis.getClient(owner);
             if (client == null)
             {
+                // inform rest of clients that session is dead.
+                const clients = await redis.getClientsOfSession(session.id);
+                info(`${JSON.stringify(clients)} will be kicked from session ${session.id}`);
+                for (let c of clients)
+                {
+                    redis.publishSessionAccept({
+                        clientId:c.id,
+                        sessionId:null,
+                        owner:null,
+                        name:null
+                    })
+                }
+                // and delete the session
                 await redis.deleteSession(session.id);
                 info(`session ${session.id} deleted, owner ${owner} is no longer there`);
+
             }
             else
             {
                 // owner is there, keep session alive
                 await redis.refreshSession(session.id);
+                const clients = await redis.getClients();
             }
         }
+
+        redis.debug();
     }
     catch
     {
