@@ -73,6 +73,7 @@ redis.subscribeSessionAccept((sessionAccept)=>{
         // Local Client has joined a session, subscribe to it
         if (!subscribedToSession.has(sessionAccept.sessionId))
         {
+            // FIXME: issue with subscribes
             info(`subscribed to local session with id ${sessionAccept.sessionId}`);
             redis.subscribeApp(sessionAccept.sessionId, app=>{
                
