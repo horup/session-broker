@@ -16,9 +16,9 @@ const validate = ()=>{
         error("REDIS_CONNECTION_STRING not defined");
         return false;
     }
-    if (config.PORT == undefined)
+    if (config.PORT == undefined || Number.isNaN(config.PORT))
     {
-        error("PORT not defined");
+        error("PORT not defined or NaN");
         return false;
     }
 

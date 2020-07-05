@@ -138,10 +138,12 @@ wss.on('connection', (ws)=>{
         const msg = ClientMsg.decode(data as any);
         if (msg.connect)
         {
+
             clientId = await redis.newId();
             localClientIds.set(ws, clientId);
             localClientSockets.set(clientId, ws);
             redis.publishConnect(clientId);
+            
         }
         else if (msg.createSession)
         {
