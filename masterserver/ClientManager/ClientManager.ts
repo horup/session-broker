@@ -14,7 +14,7 @@ const wss = new WebSocket.Server({
 
 info(`Starting WebSocket server on port ${wss.options.port}`);
 
-const localClients = new Map<number, Client>();
+//const localClients = new Map<number, Client>();
 const localClientIds = new Map<WebSocket, number>();
 const localClientSockets = new Map<number, WebSocket>();
 
@@ -48,7 +48,7 @@ redis.subscribeDisconnect((clientId)=>{
     localClientSockets.delete(clientId);
 })
 
-const subscribedToSession = new Map<number, boolean>();
+const subscribedToSession = new Map<number, number>();
 
 redis.subscribeSessionAccept((sessionAccept)=>{
     info(`session accepted with ${JSON.stringify(sessionAccept)}`);
@@ -70,26 +70,39 @@ redis.subscribeSessionAccept((sessionAccept)=>{
             ws.send(ServerMsg.encode(serverMsg).finish());
         }
 
-        // Local Client has joined a session, subscribe to it
-        if (!subscribedToSession.has(sessionAccept.sessionId))
+        const sessionid = sessionAccept.sessionId;
+
+
+        // Local Client has joined a session, subscribe to it if not done already
+        if (!subscribedToSession.has(sessionid))
         {
-            // FIXME: issue with subscribes
             info(`subscribed to local session with id ${sessionAccept.sessionId}`);
-            redis.subscribeApp(sessionAccept.sessionId, app=>{
-               
-                const msg = new ServerMsg({
-                    appMsg:{
-                        from:app.fromClientId,
-                        data:app.data
-                    }
-                });
-                const data = ServerMsg.encode(msg).finish();
-
-
-                ws.send(data);
-            });
+            redis.subscribeApp(sessionAccept.sessionId);
+            subscribedToSession.set(sessionid, 1);
+        }
+        else
+        {
+            subscribedToSession.set(sessionid, subscribedToSession.get(sessionid) + 1);
         }
     }
+})
+
+redis.setAppReplyHandler(async (app)=>{
+    localClientIds.forEach(async clientId=>{
+        // TODO: might be slow due to await
+        const c = await redis.getClient(clientId);
+        if (c.session == app.sessionId)
+        {
+            const ws = localClientSockets.get(c.id);
+            if (ws)
+            {
+                ws.send(ServerMsg.encode({appMsg:{
+                    data:app.data,
+                    from:app.fromClientId
+                }}).finish())
+            }
+        }
+    })
 })
 
 
