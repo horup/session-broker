@@ -7,10 +7,19 @@ redis.on('connect', ()=>{
     info("Connected to redis");
 });
 
+redis.on('ready', ()=>{
+    info("Redis is ready");
+});
+
 export const subscriber = new Redis(config.REDIS_CONNECTION_STRING)
 subscriber.on('connect', ()=>{
     info("Subscriber Connected to redis");
 });
+
+redis.on('ready', ()=>{
+    info("Subscriber is ready");
+});
+
 
 /**Creates a new id */
 export async function newId() 
