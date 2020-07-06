@@ -19,7 +19,7 @@ $root.ServerMsg = (function() {
      * @property {IServerWelcomeMsg|null} [welcomeMsg] ServerMsg welcomeMsg
      * @property {IServerSessionAcceptMsg|null} [sessionAccept] ServerMsg sessionAccept
      * @property {IServerSessionsMsg|null} [sessions] ServerMsg sessions
-     * @property {IConnectedClientsMsg|null} [clients] ServerMsg clients
+     * @property {ISession|null} [session] ServerMsg session
      */
 
     /**
@@ -70,24 +70,24 @@ $root.ServerMsg = (function() {
     ServerMsg.prototype.sessions = null;
 
     /**
-     * ServerMsg clients.
-     * @member {IConnectedClientsMsg|null|undefined} clients
+     * ServerMsg session.
+     * @member {ISession|null|undefined} session
      * @memberof ServerMsg
      * @instance
      */
-    ServerMsg.prototype.clients = null;
+    ServerMsg.prototype.session = null;
 
     // OneOf field names bound to virtual getters and setters
     var $oneOfFields;
 
     /**
      * ServerMsg msg.
-     * @member {"appMsg"|"welcomeMsg"|"sessionAccept"|"sessions"|"clients"|undefined} msg
+     * @member {"appMsg"|"welcomeMsg"|"sessionAccept"|"sessions"|"session"|undefined} msg
      * @memberof ServerMsg
      * @instance
      */
     Object.defineProperty(ServerMsg.prototype, "msg", {
-        get: $util.oneOfGetter($oneOfFields = ["appMsg", "welcomeMsg", "sessionAccept", "sessions", "clients"]),
+        get: $util.oneOfGetter($oneOfFields = ["appMsg", "welcomeMsg", "sessionAccept", "sessions", "session"]),
         set: $util.oneOfSetter($oneOfFields)
     });
 
@@ -123,8 +123,8 @@ $root.ServerMsg = (function() {
             $root.ServerSessionAcceptMsg.encode(message.sessionAccept, writer.uint32(/* id 101, wireType 2 =*/810).fork()).ldelim();
         if (message.sessions != null && Object.hasOwnProperty.call(message, "sessions"))
             $root.ServerSessionsMsg.encode(message.sessions, writer.uint32(/* id 102, wireType 2 =*/818).fork()).ldelim();
-        if (message.clients != null && Object.hasOwnProperty.call(message, "clients"))
-            $root.ConnectedClientsMsg.encode(message.clients, writer.uint32(/* id 103, wireType 2 =*/826).fork()).ldelim();
+        if (message.session != null && Object.hasOwnProperty.call(message, "session"))
+            $root.Session.encode(message.session, writer.uint32(/* id 103, wireType 2 =*/826).fork()).ldelim();
         return writer;
     };
 
@@ -172,7 +172,7 @@ $root.ServerMsg = (function() {
                 message.sessions = $root.ServerSessionsMsg.decode(reader, reader.uint32());
                 break;
             case 103:
-                message.clients = $root.ConnectedClientsMsg.decode(reader, reader.uint32());
+                message.session = $root.Session.decode(reader, reader.uint32());
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -248,14 +248,14 @@ $root.ServerMsg = (function() {
                     return "sessions." + error;
             }
         }
-        if (message.clients != null && message.hasOwnProperty("clients")) {
+        if (message.session != null && message.hasOwnProperty("session")) {
             if (properties.msg === 1)
                 return "msg: multiple values";
             properties.msg = 1;
             {
-                var error = $root.ConnectedClientsMsg.verify(message.clients);
+                var error = $root.Session.verify(message.session);
                 if (error)
-                    return "clients." + error;
+                    return "session." + error;
             }
         }
         return null;
@@ -293,10 +293,10 @@ $root.ServerMsg = (function() {
                 throw TypeError(".ServerMsg.sessions: object expected");
             message.sessions = $root.ServerSessionsMsg.fromObject(object.sessions);
         }
-        if (object.clients != null) {
-            if (typeof object.clients !== "object")
-                throw TypeError(".ServerMsg.clients: object expected");
-            message.clients = $root.ConnectedClientsMsg.fromObject(object.clients);
+        if (object.session != null) {
+            if (typeof object.session !== "object")
+                throw TypeError(".ServerMsg.session: object expected");
+            message.session = $root.Session.fromObject(object.session);
         }
         return message;
     };
@@ -334,10 +334,10 @@ $root.ServerMsg = (function() {
             if (options.oneofs)
                 object.msg = "sessions";
         }
-        if (message.clients != null && message.hasOwnProperty("clients")) {
-            object.clients = $root.ConnectedClientsMsg.toObject(message.clients, options);
+        if (message.session != null && message.hasOwnProperty("session")) {
+            object.session = $root.Session.toObject(message.session, options);
             if (options.oneofs)
-                object.msg = "clients";
+                object.msg = "session";
         }
         return object;
     };
@@ -2704,6 +2704,7 @@ $root.Session = (function() {
      * @property {number|null} [owner] Session owner
      * @property {string|null} [name] Session name
      * @property {boolean|null} [passwordProtected] Session passwordProtected
+     * @property {Array.<number>|null} [clients] Session clients
      */
 
     /**
@@ -2715,6 +2716,7 @@ $root.Session = (function() {
      * @param {ISession=} [properties] Properties to set
      */
     function Session(properties) {
+        this.clients = [];
         if (properties)
             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                 if (properties[keys[i]] != null)
@@ -2754,6 +2756,14 @@ $root.Session = (function() {
     Session.prototype.passwordProtected = false;
 
     /**
+     * Session clients.
+     * @member {Array.<number>} clients
+     * @memberof Session
+     * @instance
+     */
+    Session.prototype.clients = $util.emptyArray;
+
+    /**
      * Creates a new Session instance using the specified properties.
      * @function create
      * @memberof Session
@@ -2785,6 +2795,12 @@ $root.Session = (function() {
             writer.uint32(/* id 3, wireType 2 =*/26).string(message.name);
         if (message.passwordProtected != null && Object.hasOwnProperty.call(message, "passwordProtected"))
             writer.uint32(/* id 4, wireType 0 =*/32).bool(message.passwordProtected);
+        if (message.clients != null && message.clients.length) {
+            writer.uint32(/* id 5, wireType 2 =*/42).fork();
+            for (var i = 0; i < message.clients.length; ++i)
+                writer.uint32(message.clients[i]);
+            writer.ldelim();
+        }
         return writer;
     };
 
@@ -2830,6 +2846,16 @@ $root.Session = (function() {
                 break;
             case 4:
                 message.passwordProtected = reader.bool();
+                break;
+            case 5:
+                if (!(message.clients && message.clients.length))
+                    message.clients = [];
+                if ((tag & 7) === 2) {
+                    var end2 = reader.uint32() + reader.pos;
+                    while (reader.pos < end2)
+                        message.clients.push(reader.uint32());
+                } else
+                    message.clients.push(reader.uint32());
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -2878,6 +2904,13 @@ $root.Session = (function() {
         if (message.passwordProtected != null && message.hasOwnProperty("passwordProtected"))
             if (typeof message.passwordProtected !== "boolean")
                 return "passwordProtected: boolean expected";
+        if (message.clients != null && message.hasOwnProperty("clients")) {
+            if (!Array.isArray(message.clients))
+                return "clients: array expected";
+            for (var i = 0; i < message.clients.length; ++i)
+                if (!$util.isInteger(message.clients[i]))
+                    return "clients: integer[] expected";
+        }
         return null;
     };
 
@@ -2901,6 +2934,13 @@ $root.Session = (function() {
             message.name = String(object.name);
         if (object.passwordProtected != null)
             message.passwordProtected = Boolean(object.passwordProtected);
+        if (object.clients) {
+            if (!Array.isArray(object.clients))
+                throw TypeError(".Session.clients: array expected");
+            message.clients = [];
+            for (var i = 0; i < object.clients.length; ++i)
+                message.clients[i] = object.clients[i] >>> 0;
+        }
         return message;
     };
 
@@ -2917,6 +2957,8 @@ $root.Session = (function() {
         if (!options)
             options = {};
         var object = {};
+        if (options.arrays || options.defaults)
+            object.clients = [];
         if (options.defaults) {
             object.id = 0;
             object.owner = 0;
@@ -2931,6 +2973,11 @@ $root.Session = (function() {
             object.name = message.name;
         if (message.passwordProtected != null && message.hasOwnProperty("passwordProtected"))
             object.passwordProtected = message.passwordProtected;
+        if (message.clients && message.clients.length) {
+            object.clients = [];
+            for (var j = 0; j < message.clients.length; ++j)
+                object.clients[j] = message.clients[j];
+        }
         return object;
     };
 

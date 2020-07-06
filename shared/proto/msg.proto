@@ -7,8 +7,7 @@ message ServerMsg {
         ServerWelcomeMsg welcomeMsg = 100;
         ServerSessionAcceptMsg sessionAccept = 101;
         ServerSessionsMsg sessions = 102;
-        ConnectedClientsMsg clients = 103;
-
+        Session session = 103;
 
     }
 }
@@ -77,6 +76,7 @@ message Session {
     uint32 owner = 2;
     string name = 3;
     bool passwordProtected = 4;
+    repeated uint32 clients = 5;
 }
 
 message ServerSessionsMsg {

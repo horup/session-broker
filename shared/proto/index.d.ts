@@ -14,8 +14,8 @@ export interface IServerMsg {
     /** ServerMsg sessions */
     sessions?: (IServerSessionsMsg|null);
 
-    /** ServerMsg clients */
-    clients?: (IConnectedClientsMsg|null);
+    /** ServerMsg session */
+    session?: (ISession|null);
 }
 
 /** Represents a ServerMsg. */
@@ -39,11 +39,11 @@ export class ServerMsg implements IServerMsg {
     /** ServerMsg sessions. */
     public sessions?: (IServerSessionsMsg|null);
 
-    /** ServerMsg clients. */
-    public clients?: (IConnectedClientsMsg|null);
+    /** ServerMsg session. */
+    public session?: (ISession|null);
 
     /** ServerMsg msg. */
-    public msg?: ("appMsg"|"welcomeMsg"|"sessionAccept"|"sessions"|"clients");
+    public msg?: ("appMsg"|"welcomeMsg"|"sessionAccept"|"sessions"|"session");
 
     /**
      * Creates a new ServerMsg instance using the specified properties.
@@ -1171,6 +1171,9 @@ export interface ISession {
 
     /** Session passwordProtected */
     passwordProtected?: (boolean|null);
+
+    /** Session clients */
+    clients?: (number[]|null);
 }
 
 /** Represents a Session. */
@@ -1193,6 +1196,9 @@ export class Session implements ISession {
 
     /** Session passwordProtected. */
     public passwordProtected: boolean;
+
+    /** Session clients. */
+    public clients: number[];
 
     /**
      * Creates a new Session instance using the specified properties.

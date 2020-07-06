@@ -93,10 +93,11 @@ export class MasterClient
                 const o = JSON.parse(json);
                 this.onAppMsgFromJson(serverMsg.appMsg.from, o);
             }
-            else if (serverMsg.clients)
+            else if (serverMsg.session)
             {
-                this._clients = serverMsg.clients.clients as Client[];
-                this.onClientsChange(this.clients);
+                console.log(serverMsg.session);
+                /*this._clients = serverMsg.clients.clients as Client[];
+                this.onClientsChange(this.clients);*/
             }
             
 

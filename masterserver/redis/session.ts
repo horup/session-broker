@@ -9,6 +9,25 @@ export interface SessionSwitchMsg
     owner:number;
 }
 
+export interface SessionChangeMsg
+{
+    session:Session;
+}
+
+export function subscribeSessionChange(f:(sessionChange:SessionChangeMsg)=>any)
+{
+    subscriber.subscribe("sessionchange");
+    subscriber.on('message', (channel, value)=>{
+        if (channel == "sessionchange")
+            f(JSON.parse(value));
+    });
+}
+
+export async function publishSessionChange(sessionChange:SessionChangeMsg)
+{
+    const res = await redis.publish("sessionchange", JSON.stringify(sessionChange));
+}
+
 export function subscribeSessionSwitch(f:(sessionSwitch:SessionSwitchMsg)=>any)
 {
     subscriber.subscribe("sessionswitch");

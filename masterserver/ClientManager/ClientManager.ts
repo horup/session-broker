@@ -37,6 +37,17 @@ redis.subscribeConnect((clientId)=>{
     }
 })
 
+redis.subscribeSessionChange((msg)=>{
+    const s = msg.session;
+    s.clients.forEach(cid=>{
+        const ws = localClientSockets.get(cid);
+        if (ws)
+        {
+            ws.send(ServerMsg.encode({session:msg.session}).finish());
+        }
+    })
+});
+
 redis.subscribeDisconnect((clientId)=>{
     info.extend(`subscribeDisconnect`)(`${clientId} has disconnected`);
     const ws = localClientSockets.get(clientId);

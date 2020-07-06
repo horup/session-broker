@@ -49,9 +49,20 @@ async function validateSessions()
             sessionClients.get(c.session).push(c);
     })
 
-    sessions.forEach(s=>{
-        s.clients = sessionClients.get(s.id).map(c=>c.id);
-        info(`${s.id} has these clients: ${s.clients}`);
+    // check connected clients have not changed
+    sessions.forEach(async s=>{
+        const clients = sessionClients.get(s.id).map(c=>c.id);
+        let same = true;
+        if (s.clients.length != clients.length)
+            same = false;
+        if (same)
+            clients.forEach((c,i)=>clients[i] != s.clients[i] ? same = false : undefined);
+        if (!same)
+        {
+            s.clients = sessionClients.get(s.id).map(c=>c.id);
+            await redis.setSession(s);
+            await redis.publishSessionChange({session:s});
+        }
     })
     
 }
