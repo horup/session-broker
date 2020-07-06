@@ -1,6 +1,10 @@
 import {ClientMsg, ServerMsg, ISession} from '../shared';
+import { ENGINE_METHOD_DIGESTS } from 'constants';
 export * from '../shared';
-
+export interface Client
+{
+    id:number;
+}
 export class MasterClient
 {
     private ws:WebSocket;
@@ -10,6 +14,12 @@ export class MasterClient
     private _sessionId:number;
     private _connected = false;
     private _sessions = [] as ISession[]; 
+    private _clients = [] as Client[];
+
+    get clients()
+    {
+        return this._clients;
+    }
 
     get clientId()
     {
@@ -83,6 +93,11 @@ export class MasterClient
                 const o = JSON.parse(json);
                 this.onAppMsgFromJson(serverMsg.appMsg.from, o);
             }
+            else if (serverMsg.clients)
+            {
+                this._clients = serverMsg.clients.clients as Client[];
+                this.onClientsChange(this.clients);
+            }
             
 
             this.onMessage(serverMsg);
@@ -106,7 +121,8 @@ export class MasterClient
     onAppMsgFromJson = <AppMsg>(fromId:number, app:AppMsg)=>{}
     onConnectionChange = (connected:boolean, clientId:number)=>{}
     onSessionChange = (sessionId:number, sessionName:string, sessionOwner:number)=>{};
-    onSessionsChange = (sessions:ISession[]);
+    onSessionsChange = (sessions:ISession[])=>{};
+    onClientsChange = (clients:Client[])=>{};
 
     private sendConnect():boolean
     {

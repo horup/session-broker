@@ -19,6 +19,7 @@ $root.ServerMsg = (function() {
      * @property {IServerWelcomeMsg|null} [welcomeMsg] ServerMsg welcomeMsg
      * @property {IServerSessionAcceptMsg|null} [sessionAccept] ServerMsg sessionAccept
      * @property {IServerSessionsMsg|null} [sessions] ServerMsg sessions
+     * @property {IConnectedClientsMsg|null} [clients] ServerMsg clients
      */
 
     /**
@@ -68,17 +69,25 @@ $root.ServerMsg = (function() {
      */
     ServerMsg.prototype.sessions = null;
 
+    /**
+     * ServerMsg clients.
+     * @member {IConnectedClientsMsg|null|undefined} clients
+     * @memberof ServerMsg
+     * @instance
+     */
+    ServerMsg.prototype.clients = null;
+
     // OneOf field names bound to virtual getters and setters
     var $oneOfFields;
 
     /**
      * ServerMsg msg.
-     * @member {"appMsg"|"welcomeMsg"|"sessionAccept"|"sessions"|undefined} msg
+     * @member {"appMsg"|"welcomeMsg"|"sessionAccept"|"sessions"|"clients"|undefined} msg
      * @memberof ServerMsg
      * @instance
      */
     Object.defineProperty(ServerMsg.prototype, "msg", {
-        get: $util.oneOfGetter($oneOfFields = ["appMsg", "welcomeMsg", "sessionAccept", "sessions"]),
+        get: $util.oneOfGetter($oneOfFields = ["appMsg", "welcomeMsg", "sessionAccept", "sessions", "clients"]),
         set: $util.oneOfSetter($oneOfFields)
     });
 
@@ -114,6 +123,8 @@ $root.ServerMsg = (function() {
             $root.ServerSessionAcceptMsg.encode(message.sessionAccept, writer.uint32(/* id 101, wireType 2 =*/810).fork()).ldelim();
         if (message.sessions != null && Object.hasOwnProperty.call(message, "sessions"))
             $root.ServerSessionsMsg.encode(message.sessions, writer.uint32(/* id 102, wireType 2 =*/818).fork()).ldelim();
+        if (message.clients != null && Object.hasOwnProperty.call(message, "clients"))
+            $root.ConnectedClientsMsg.encode(message.clients, writer.uint32(/* id 103, wireType 2 =*/826).fork()).ldelim();
         return writer;
     };
 
@@ -159,6 +170,9 @@ $root.ServerMsg = (function() {
                 break;
             case 102:
                 message.sessions = $root.ServerSessionsMsg.decode(reader, reader.uint32());
+                break;
+            case 103:
+                message.clients = $root.ConnectedClientsMsg.decode(reader, reader.uint32());
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -234,6 +248,16 @@ $root.ServerMsg = (function() {
                     return "sessions." + error;
             }
         }
+        if (message.clients != null && message.hasOwnProperty("clients")) {
+            if (properties.msg === 1)
+                return "msg: multiple values";
+            properties.msg = 1;
+            {
+                var error = $root.ConnectedClientsMsg.verify(message.clients);
+                if (error)
+                    return "clients." + error;
+            }
+        }
         return null;
     };
 
@@ -268,6 +292,11 @@ $root.ServerMsg = (function() {
             if (typeof object.sessions !== "object")
                 throw TypeError(".ServerMsg.sessions: object expected");
             message.sessions = $root.ServerSessionsMsg.fromObject(object.sessions);
+        }
+        if (object.clients != null) {
+            if (typeof object.clients !== "object")
+                throw TypeError(".ServerMsg.clients: object expected");
+            message.clients = $root.ConnectedClientsMsg.fromObject(object.clients);
         }
         return message;
     };
@@ -304,6 +333,11 @@ $root.ServerMsg = (function() {
             object.sessions = $root.ServerSessionsMsg.toObject(message.sessions, options);
             if (options.oneofs)
                 object.msg = "sessions";
+        }
+        if (message.clients != null && message.hasOwnProperty("clients")) {
+            object.clients = $root.ConnectedClientsMsg.toObject(message.clients, options);
+            if (options.oneofs)
+                object.msg = "clients";
         }
         return object;
     };
@@ -667,6 +701,401 @@ $root.ClientMsg = (function() {
     };
 
     return ClientMsg;
+})();
+
+$root.Client = (function() {
+
+    /**
+     * Properties of a Client.
+     * @exports IClient
+     * @interface IClient
+     * @property {number|null} [id] Client id
+     */
+
+    /**
+     * Constructs a new Client.
+     * @exports Client
+     * @classdesc Represents a Client.
+     * @implements IClient
+     * @constructor
+     * @param {IClient=} [properties] Properties to set
+     */
+    function Client(properties) {
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * Client id.
+     * @member {number} id
+     * @memberof Client
+     * @instance
+     */
+    Client.prototype.id = 0;
+
+    /**
+     * Creates a new Client instance using the specified properties.
+     * @function create
+     * @memberof Client
+     * @static
+     * @param {IClient=} [properties] Properties to set
+     * @returns {Client} Client instance
+     */
+    Client.create = function create(properties) {
+        return new Client(properties);
+    };
+
+    /**
+     * Encodes the specified Client message. Does not implicitly {@link Client.verify|verify} messages.
+     * @function encode
+     * @memberof Client
+     * @static
+     * @param {IClient} message Client message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    Client.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.id);
+        return writer;
+    };
+
+    /**
+     * Encodes the specified Client message, length delimited. Does not implicitly {@link Client.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof Client
+     * @static
+     * @param {IClient} message Client message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    Client.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a Client message from the specified reader or buffer.
+     * @function decode
+     * @memberof Client
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {Client} Client
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    Client.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.Client();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                message.id = reader.uint32();
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a Client message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof Client
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {Client} Client
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    Client.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a Client message.
+     * @function verify
+     * @memberof Client
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    Client.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.id != null && message.hasOwnProperty("id"))
+            if (!$util.isInteger(message.id))
+                return "id: integer expected";
+        return null;
+    };
+
+    /**
+     * Creates a Client message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof Client
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {Client} Client
+     */
+    Client.fromObject = function fromObject(object) {
+        if (object instanceof $root.Client)
+            return object;
+        var message = new $root.Client();
+        if (object.id != null)
+            message.id = object.id >>> 0;
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a Client message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof Client
+     * @static
+     * @param {Client} message Client
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    Client.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.defaults)
+            object.id = 0;
+        if (message.id != null && message.hasOwnProperty("id"))
+            object.id = message.id;
+        return object;
+    };
+
+    /**
+     * Converts this Client to JSON.
+     * @function toJSON
+     * @memberof Client
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    Client.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    return Client;
+})();
+
+$root.ConnectedClientsMsg = (function() {
+
+    /**
+     * Properties of a ConnectedClientsMsg.
+     * @exports IConnectedClientsMsg
+     * @interface IConnectedClientsMsg
+     * @property {Array.<IClient>|null} [clients] ConnectedClientsMsg clients
+     */
+
+    /**
+     * Constructs a new ConnectedClientsMsg.
+     * @exports ConnectedClientsMsg
+     * @classdesc Represents a ConnectedClientsMsg.
+     * @implements IConnectedClientsMsg
+     * @constructor
+     * @param {IConnectedClientsMsg=} [properties] Properties to set
+     */
+    function ConnectedClientsMsg(properties) {
+        this.clients = [];
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * ConnectedClientsMsg clients.
+     * @member {Array.<IClient>} clients
+     * @memberof ConnectedClientsMsg
+     * @instance
+     */
+    ConnectedClientsMsg.prototype.clients = $util.emptyArray;
+
+    /**
+     * Creates a new ConnectedClientsMsg instance using the specified properties.
+     * @function create
+     * @memberof ConnectedClientsMsg
+     * @static
+     * @param {IConnectedClientsMsg=} [properties] Properties to set
+     * @returns {ConnectedClientsMsg} ConnectedClientsMsg instance
+     */
+    ConnectedClientsMsg.create = function create(properties) {
+        return new ConnectedClientsMsg(properties);
+    };
+
+    /**
+     * Encodes the specified ConnectedClientsMsg message. Does not implicitly {@link ConnectedClientsMsg.verify|verify} messages.
+     * @function encode
+     * @memberof ConnectedClientsMsg
+     * @static
+     * @param {IConnectedClientsMsg} message ConnectedClientsMsg message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ConnectedClientsMsg.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.clients != null && message.clients.length)
+            for (var i = 0; i < message.clients.length; ++i)
+                $root.Client.encode(message.clients[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+        return writer;
+    };
+
+    /**
+     * Encodes the specified ConnectedClientsMsg message, length delimited. Does not implicitly {@link ConnectedClientsMsg.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof ConnectedClientsMsg
+     * @static
+     * @param {IConnectedClientsMsg} message ConnectedClientsMsg message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ConnectedClientsMsg.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a ConnectedClientsMsg message from the specified reader or buffer.
+     * @function decode
+     * @memberof ConnectedClientsMsg
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {ConnectedClientsMsg} ConnectedClientsMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ConnectedClientsMsg.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ConnectedClientsMsg();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                if (!(message.clients && message.clients.length))
+                    message.clients = [];
+                message.clients.push($root.Client.decode(reader, reader.uint32()));
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a ConnectedClientsMsg message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof ConnectedClientsMsg
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {ConnectedClientsMsg} ConnectedClientsMsg
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ConnectedClientsMsg.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a ConnectedClientsMsg message.
+     * @function verify
+     * @memberof ConnectedClientsMsg
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    ConnectedClientsMsg.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.clients != null && message.hasOwnProperty("clients")) {
+            if (!Array.isArray(message.clients))
+                return "clients: array expected";
+            for (var i = 0; i < message.clients.length; ++i) {
+                var error = $root.Client.verify(message.clients[i]);
+                if (error)
+                    return "clients." + error;
+            }
+        }
+        return null;
+    };
+
+    /**
+     * Creates a ConnectedClientsMsg message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof ConnectedClientsMsg
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {ConnectedClientsMsg} ConnectedClientsMsg
+     */
+    ConnectedClientsMsg.fromObject = function fromObject(object) {
+        if (object instanceof $root.ConnectedClientsMsg)
+            return object;
+        var message = new $root.ConnectedClientsMsg();
+        if (object.clients) {
+            if (!Array.isArray(object.clients))
+                throw TypeError(".ConnectedClientsMsg.clients: array expected");
+            message.clients = [];
+            for (var i = 0; i < object.clients.length; ++i) {
+                if (typeof object.clients[i] !== "object")
+                    throw TypeError(".ConnectedClientsMsg.clients: object expected");
+                message.clients[i] = $root.Client.fromObject(object.clients[i]);
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a ConnectedClientsMsg message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof ConnectedClientsMsg
+     * @static
+     * @param {ConnectedClientsMsg} message ConnectedClientsMsg
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    ConnectedClientsMsg.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.arrays || options.defaults)
+            object.clients = [];
+        if (message.clients && message.clients.length) {
+            object.clients = [];
+            for (var j = 0; j < message.clients.length; ++j)
+                object.clients[j] = $root.Client.toObject(message.clients[j], options);
+        }
+        return object;
+    };
+
+    /**
+     * Converts this ConnectedClientsMsg to JSON.
+     * @function toJSON
+     * @memberof ConnectedClientsMsg
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    ConnectedClientsMsg.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    return ConnectedClientsMsg;
 })();
 
 $root.ClientConnectMsg = (function() {

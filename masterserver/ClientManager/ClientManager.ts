@@ -14,9 +14,10 @@ const wss = new WebSocket.Server({
 
 info(`Starting WebSocket server on port ${wss.options.port}`);
 
-//const localClients = new Map<number, Client>();
 const localClientIds = new Map<WebSocket, number>();
 const localClientSockets = new Map<number, WebSocket>();
+const subscribedToSession = new Map<number, number>();
+
 
 redis.subscribeConnect((clientId)=>{
     info(`${clientId} has connected`);
@@ -48,9 +49,8 @@ redis.subscribeDisconnect((clientId)=>{
     localClientSockets.delete(clientId);
 })
 
-const subscribedToSession = new Map<number, number>();
 
-redis.subscribeSessionAccept((sessionAccept)=>{
+redis.subscribeSessionSwitch((sessionAccept)=>{
     info(`session accepted with ${JSON.stringify(sessionAccept)}`);
 
     const clientId = sessionAccept.clientId;
@@ -71,7 +71,6 @@ redis.subscribeSessionAccept((sessionAccept)=>{
         }
 
         const sessionid = sessionAccept.sessionId;
-
 
         // Local Client has joined a session, subscribe to it if not done already
         if (!subscribedToSession.has(sessionid))
@@ -133,12 +132,10 @@ wss.on('connection', (ws)=>{
         const msg = ClientMsg.decode(data as any);
         if (msg.connect)
         {
-
             clientId = await redis.newId();
             localClientIds.set(ws, clientId);
             localClientSockets.set(clientId, ws);
             redis.publishConnect(clientId);
-            
         }
         else if (msg.createSession)
         {

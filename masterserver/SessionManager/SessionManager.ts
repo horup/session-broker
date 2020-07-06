@@ -15,10 +15,11 @@ redis.subscribeCreateSession(async (createSession)=>{
             name:createSession.name,
             owner:createSession.owner,
             password:createSession.password,
-            nodeId:config.ID
+            nodeId:config.ID,
+            clients:[createSession.owner]
         })
 
-        await redis.publishSessionAccept({
+        await redis.publishSessionSwitch({
             clientId:createSession.owner,
             owner:createSession.owner,
             sessionId:sessionId,
@@ -47,7 +48,7 @@ redis.subscribeJoin(async (join)=>{
     if (session)
     {
         info(`client joined with ${JSON.stringify(join)}`);
-        redis.publishSessionAccept({
+        redis.publishSessionSwitch({
             clientId:join.clientId,
             owner:session.owner,
             sessionId:session.id,
@@ -77,7 +78,7 @@ async function tick()
                 info(`${JSON.stringify(clients)} will be kicked from session ${session.id}`);
                 for (let c of clients)
                 {
-                    redis.publishSessionAccept({
+                    redis.publishSessionSwitch({
                         clientId:c.id,
                         sessionId:null,
                         owner:null,

@@ -7,6 +7,9 @@ message ServerMsg {
         ServerWelcomeMsg welcomeMsg = 100;
         ServerSessionAcceptMsg sessionAccept = 101;
         ServerSessionsMsg sessions = 102;
+        ConnectedClientsMsg clients = 103;
+
+
     }
 }
 
@@ -18,6 +21,12 @@ message ClientMsg {
         ClientCreateSessionMsg createSession = 102;
         ClientRefreshSessionsMsg refreshSessions = 103;
     }
+}
+message Client {
+    uint32 id = 1;
+}
+message ConnectedClientsMsg {
+    repeated Client clients = 1;
 }
 
 /**Connect to the master server */

@@ -1,7 +1,7 @@
 import { subscriber, redis } from "./redis";
 import { info } from "../log";
 
-export interface SessionAccept
+export interface SessionSwitch
 {
     clientId:number;
     sessionId:number;
@@ -9,18 +9,18 @@ export interface SessionAccept
     owner:number;
 }
 
-export function subscribeSessionAccept(f:(sessionAccept:SessionAccept)=>any)
+export function subscribeSessionSwitch(f:(sessionAccept:SessionSwitch)=>any)
 {
-    subscriber.subscribe("sessionaccept");
+    subscriber.subscribe("sessionswitch");
     subscriber.on('message', (channel, value)=>{
-        if (channel == "sessionaccept")
+        if (channel == "sessionswitch")
             f(JSON.parse(value));
     });
 }
 
-export async function publishSessionAccept(sessionAccept:SessionAccept)
+export async function publishSessionSwitch(sessionAccept:SessionSwitch)
 {
-    const res = await redis.publish("sessionaccept", JSON.stringify(sessionAccept));
+    const res = await redis.publish("sessionswitch", JSON.stringify(sessionAccept));
 }
 
 
@@ -82,6 +82,7 @@ export interface Session
     name:string;
     password:string;
     nodeId:string;
+    clients:number[];
 }
 
 export async function setSession(session:Session)
