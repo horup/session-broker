@@ -20,6 +20,7 @@ const Index = ()=>{
     const [sessionName, setSessionName] = React.useState(null as string);
     const [sessionId, setSessionId] = React.useState<number>(0);
     const [sessions, setSessions] = React.useState([] as ISession[]);
+    const [session, setSession] = React.useState(null as Session);
     const [textBuffer, setTextBuffer] = React.useState("");
     const [chat, setChat] = React.useState("");
     const chatRef = React.useRef(chat);
@@ -38,19 +39,12 @@ const Index = ()=>{
         client.onSessionsChange = (sessions)=>{
             setSessions(sessions);
         }
-        client.onSessionChange = (id, name, owner)=>{
-            setSessionId(id);
-            setSessionName(name);
-            if (client.isSessionOwner)
-            {
-                client.sendAppMessageAsJson<AppMsg>({
-                    chat:{
-                        id:client.clientId,
-                        text:"Chat session started!"
-                    }
-                }, undefined, true);
-            }
+        client.onSessionChange = (session)=>{
+            setSessionId(session.id);
+            setSessionName(session.name);
+            setSession(session);
         };
+
 
         client.onAppMsgFromJson = (fromId, msg:AppMsg)=>
         {
@@ -74,6 +68,8 @@ const Index = ()=>{
             {connected ? 'Connected' : 'Disconnected'} as {clientId != null ? clientId : "---"}
             <br/>
             {sessionId && connected ? `Part of session ${sessionId} with name:'${sessionName}'` : ""}
+            <br/>
+            {client.session != null && connected ? `Chatters: ${client.session.clients}` : ""}
         </div>
         {
             sessionId == 0 ? 

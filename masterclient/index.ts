@@ -5,6 +5,10 @@ export interface Client
 {
     id:number;
 }
+export interface Session extends ISession
+{
+
+}
 export class MasterClient
 {
     private ws:WebSocket;
@@ -15,10 +19,16 @@ export class MasterClient
     private _connected = false;
     private _sessions = [] as ISession[]; 
     private _clients = [] as Client[];
+    private _session = null as Session;
 
     get clients()
     {
         return this._clients;
+    }
+
+    get session()
+    {
+        return this._session;
     }
 
     get clientId()
@@ -78,7 +88,12 @@ export class MasterClient
                 this._sessionId = serverMsg.sessionAccept.sesionId;
                 this._sessionName = serverMsg.sessionAccept.name;
                 this._sessionOwnerId = serverMsg.sessionAccept.ownerId;
-                this.onSessionChange(this.sessionId, this.sessionName, this.sessionOwnerId);
+                this.onSessionChange({
+                    clients:[],
+                    id:this._sessionId,
+                    name:this._sessionName,
+                    owner:this._sessionOwnerId
+                })
             }
             else if (serverMsg.sessions)
             {
@@ -95,7 +110,8 @@ export class MasterClient
             }
             else if (serverMsg.session)
             {
-                console.log(serverMsg.session);
+                this._session = serverMsg.session;
+                this.onSessionChange(this.session as Session);
                 /*this._clients = serverMsg.clients.clients as Client[];
                 this.onClientsChange(this.clients);*/
             }
@@ -121,8 +137,8 @@ export class MasterClient
     
     onAppMsgFromJson = <AppMsg>(fromId:number, app:AppMsg)=>{}
     onConnectionChange = (connected:boolean, clientId:number)=>{}
-    onSessionChange = (sessionId:number, sessionName:string, sessionOwner:number)=>{};
-    onSessionsChange = (sessions:ISession[])=>{};
+    onSessionChange = (session:Session)=>{};
+    onSessionsChange = (sessions:Session[])=>{};
     onClientsChange = (clients:Client[])=>{};
 
     private sendConnect():boolean
