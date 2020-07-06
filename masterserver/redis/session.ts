@@ -130,7 +130,10 @@ export async function getSessionIds():Promise<number[]>
                 ids.push(id);
         }
 
-        res(ids);
+        stream.on('end', ()=>{
+            res(ids);
+        })
+
     })
     });
     
