@@ -1,7 +1,7 @@
 import { subscriber, redis } from "./redis";
 import { info } from "../log";
 
-export interface SessionSwitch
+export interface SessionSwitchMsg
 {
     clientId:number;
     sessionId:number;
@@ -9,7 +9,7 @@ export interface SessionSwitch
     owner:number;
 }
 
-export function subscribeSessionSwitch(f:(sessionAccept:SessionSwitch)=>any)
+export function subscribeSessionSwitch(f:(sessionSwitch:SessionSwitchMsg)=>any)
 {
     subscriber.subscribe("sessionswitch");
     subscriber.on('message', (channel, value)=>{
@@ -18,9 +18,9 @@ export function subscribeSessionSwitch(f:(sessionAccept:SessionSwitch)=>any)
     });
 }
 
-export async function publishSessionSwitch(sessionAccept:SessionSwitch)
+export async function publishSessionSwitch(sessionSwitch:SessionSwitchMsg)
 {
-    const res = await redis.publish("sessionswitch", JSON.stringify(sessionAccept));
+    const res = await redis.publish("sessionswitch", JSON.stringify(sessionSwitch));
 }
 
 

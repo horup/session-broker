@@ -1,6 +1,7 @@
 import * as redis from '../redis';
 import {info as _info} from '../log';
 import config from '../config';
+import { Client } from '../redis';
 
 const info = _info.extend('session-manager');
 
@@ -16,7 +17,7 @@ redis.subscribeCreateSession(async (createSession)=>{
             owner:createSession.owner,
             password:createSession.password,
             nodeId:config.ID,
-            clients:[createSession.owner]
+            clients:[]
         })
 
         await redis.publishSessionSwitch({
@@ -36,8 +37,38 @@ redis.subscribeCreateSession(async (createSession)=>{
     }
 })
 
-redis.subscribeDisconnect(async (clientId)=>{
+async function validateSessions()
+{
+    // ensures thus node's sessions are valid, e.g. clients part of a session is correct
+    const clients = await redis.getClients();
+    const sessions = await (await redis.getSessions()).filter(s=>s.nodeId == config.ID);
+    const sessionClients = new Map<number, Client[]>();
+    sessions.forEach(s=>sessionClients.set(s.id, []));
+    clients.forEach(c=>{
+        if (c.session && sessionClients.has(c.session))
+            sessionClients.get(c.session).push(c);
+    })
 
+    sessions.forEach(s=>{
+        s.clients = sessionClients.get(s.id).map(c=>c.id);
+        info(`${s.id} has these clients: ${s.clients}`);
+    })
+    
+}
+
+redis.subscribeSessionSwitch(async sessionSwitch=>{
+   /* const session = await redis.getSession(sessionSwitch.sessionId);
+    if (session.nodeId == config.ID)
+    {
+        session.clients = [...session.clients, sessionSwitch.clientId];
+        await redis.setSession(session);
+        info(`session ${session.id} now has the following clients: ${session.clients}`);
+    }*/
+    await validateSessions();
+});
+
+redis.subscribeDisconnect(async (clientId)=>{
+    await validateSessions();
 })
 
 
@@ -47,7 +78,7 @@ redis.subscribeJoin(async (join)=>{
     const session = await redis.getSession(sessionId);
     if (session)
     {
-        info(`client joined with ${JSON.stringify(join)}`);
+        info(`client asked to join with ${JSON.stringify(join)}`);
         redis.publishSessionSwitch({
             clientId:join.clientId,
             owner:session.owner,

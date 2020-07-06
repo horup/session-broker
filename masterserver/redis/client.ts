@@ -71,6 +71,14 @@ export async function getClients() : Promise<Client[]>
     return p;
 }
 
+export async function getClientsAsMap() : Promise<Map<number, Client>>
+{
+    const map = new Map<number, Client>();
+    const clients = await getClients();
+    clients.forEach(c=>map.set(c.id, c));
+    return map;
+}
+
 export async function refreshClient(clientId:number) : Promise<any>
 {
     redis.expire(`client:${clientId}`, 30);
