@@ -107,29 +107,11 @@ redis.setAppReplyHandler(async (app)=>{
 
 
 redis.subscribeSessionCreated(async (sessionCreated)=>{
- /*   if (config.ID == sessionCreated.nodeId)
-    {
-        info(`subscribed to local session with id ${sessionCreated.sessionId}`);
-        redis.subscribeApp(sessionCreated.sessionId, app=>{
-            // TODO: send data from local node to local or remote node, depending on client
-        });
-    }*/
+    // send list of sessions for all clients
+    localClientSockets.forEach(ws=>{
+        sendSessions(ws);
+    })
 })
-
-/*
-async function app(app:redis.App)
-{
-    const ws = localClientSockets.get(app.fromClientId);
-    if (app.loopback)
-    {
-        ws.send(ServerMsg.encode({appMsg:{
-            data:app.data,
-            from:app.fromClientId
-        }}))
-    }
-}*/
-
-
 
 async function sendSessions(ws:WebSocket)
 {
