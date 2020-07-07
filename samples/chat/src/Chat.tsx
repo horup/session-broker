@@ -42,7 +42,7 @@ const Index = ()=>{
         };
 
 
-        client.onAppMsgFromJson = (fromId, msg:AppMsg)=>
+        client.onAppMessageFromJson = (fromId, msg:AppMsg)=>
         {
             const c = chatRef.current + `${msg.chat.id}:${msg.chat.text}\n`;
             chatRef.current = c; //hack to avoid stale closure

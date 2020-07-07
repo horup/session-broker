@@ -81,7 +81,7 @@ export class MasterClient
                 let te = new TextDecoder();
                 let json = te.decode(serverMsg.app.data);
                 const o = JSON.parse(json);
-                this.onAppMsgFromJson(serverMsg.app.from, o);
+                this.onAppMessageFromJson(serverMsg.app.from, o);
             }            
 
             this.onMessage(serverMsg);
@@ -104,7 +104,7 @@ export class MasterClient
     }
 
     
-    onAppMsgFromJson = <AppMsg>(fromId:number, app:AppMsg)=>{}
+    onAppMessageFromJson = <AppMsg>(fromId:number, app:AppMsg)=>{}
     onConnectionChange = (connected:boolean, clientId:number)=>{}
     onSessionChange = (sesssion?:(Session))=>{};
     onSessionsChange = (sessions:Session[])=>{};
