@@ -15,6 +15,7 @@ const wss = new WebSocket.Server({
 info(`Starting WebSocket server on port ${wss.options.port}`);
 
 const localClientIds = new Map<WebSocket, number>();
+const localClientSessionId = new Map<number, number>();
 const localClientSockets = new Map<number, WebSocket>();
 const subscribedToSession = new Map<number, number>();
 
@@ -43,6 +44,7 @@ redis.subscribeSessionChange((msg)=>{
         const ws = localClientSockets.get(cid);
         if (ws)
         {
+            localClientSessionId.set(cid, msg.session.id);
             ws.send(ServerMsg.encode({currentSessionChanged:{session:msg.session}}).finish());
         }
     })
@@ -53,6 +55,7 @@ redis.subscribeDisconnect((clientId)=>{
     const ws = localClientSockets.get(clientId);
     if (ws != null)
     {
+        localClientSessionId.delete(clientId);
         redis.delClient(clientId);
         localClientIds.delete(ws);
     }
@@ -76,6 +79,7 @@ redis.subscribeSessionSwitch((sessionSwitch)=>{
                 }
             })
 
+            localClientSessionId.set(clientId, sessionid);
             redis.setClient(clientId, {id:clientId, session:sessionid});
             ws.send(ServerMsg.encode(serverMsg).finish());
         }
@@ -97,18 +101,16 @@ redis.subscribeSessionSwitch((sessionSwitch)=>{
 
 redis.setAppReplyHandler(async (app)=>{
     localClientIds.forEach(async clientId=>{
-        // TODO: might be slow due to await
-        const c = await redis.getClient(clientId);
-        if (c.session == app.sessionId)
+        if (localClientSessionId.get(clientId) == app.sessionId)
         {
 
          /*   if (clientId == app.fromClientId && !app.loopback)
-                return; // dont sent to client if sender == receiver and loopback is false
-*/
+                return; // dont sent to client if sender == receiver and loopback is false*/
+                
             if (app.toClientId != null && app.toClientId != clientId)
                 return; // dont sent to client if the message is not intended for this client
 
-            const ws = localClientSockets.get(c.id);
+            const ws = localClientSockets.get(clientId);
             if (ws)
             {
                 ws.send(ServerMsg.encode({app:{
@@ -179,8 +181,11 @@ wss.on('connection', (ws)=>{
         }
         else if (msg.appMsg)
         {
+    info(`appMsg:start`);
+            
             // TODO: await might be slow, caching could be needed to improve
-            const sessionId = await redis.getClientSessionId(clientId);
+            const sessionId = localClientSessionId.get(clientId);//await redis.getClientSessionId(clientId);
+
             redis.publishApp({
                 data:msg.appMsg.data,
                 fromClientId:clientId,
@@ -188,6 +193,9 @@ wss.on('connection', (ws)=>{
                 loopback:msg.appMsg.loopback,
                 sessionId:sessionId
             })
+            info(`appMsg:end`);
+
+
         }
         else if (msg.refreshSessions)
         {
