@@ -102,6 +102,13 @@ redis.setAppReplyHandler(async (app)=>{
         const c = await redis.getClient(clientId);
         if (c.session == app.sessionId)
         {
+
+            if (clientId == app.fromClientId && !app.loopback)
+                return; // dont sent to client if sender == receiver and loopback is false
+
+            if (app.toClientId != null && app.toClientId != clientId)
+                return; // dont sent to client if the message is not intended for this client
+
             const ws = localClientSockets.get(c.id);
             if (ws)
             {
@@ -110,6 +117,7 @@ redis.setAppReplyHandler(async (app)=>{
                     from:app.fromClientId
                 }}).finish())
             }
+            
         }
     })
 })
@@ -174,11 +182,10 @@ wss.on('connection', (ws)=>{
         {
             // TODO: await might be slow, caching could be needed to improve
             const sessionId = await redis.getClientSessionId(clientId);
-            //console.log(msg.appMsg.data.slice(0,4));
             redis.publishApp({
                 data:msg.appMsg.data,
                 fromClientId:clientId,
-                toClientId:msg.appMsg.to,
+                toClientId:msg.appMsg.to != 0 ? msg.appMsg.to : null,
                 loopback:msg.appMsg.loopback,
                 sessionId:sessionId
             })
