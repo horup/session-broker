@@ -11,6 +11,12 @@ interface AppMsg
     chat?:{
         id:number;
         text:string;
+    },
+    ping?:{
+        dt:number;
+    },
+    pong?:{
+        dt:number;
     }
 }
 
@@ -28,7 +34,7 @@ const Index = ()=>{
                 id:clientId,
                 text:textBuffer
             }
-        }, undefined, false);
+        });
         setTextBuffer("");
     }
 
@@ -44,9 +50,32 @@ const Index = ()=>{
 
         client.onAppMessageFromJson = (fromId, msg:AppMsg)=>
         {
-            const c = chatRef.current + `${msg.chat.id}:${msg.chat.text}\n`;
-            chatRef.current = c; //hack to avoid stale closure
-            setChat(c);
+            if (msg.chat)
+            {
+                const c = chatRef.current + `${msg.chat.id}:${msg.chat.text}\n`;
+                chatRef.current = c; //hack to avoid stale closure
+                setChat(c);
+            }
+            else if (msg.pong)
+            {
+                const nowMs = (new Date()).getTime();
+                const diff = nowMs - msg.pong.dt;
+                const c = chatRef.current + `Latency:${diff}ms\n`;
+                chatRef.current = c; //hack to avoid stale closure
+                setChat(c);
+            }
+
+            if (client.isSessionOwner)
+            {
+                if (msg.ping)
+                {
+                    client.sendAppMessageAsJson<AppMsg>({
+                        pong:{
+                            dt:msg.ping.dt
+                        }
+                    }, fromId)
+                }
+            }
         }
 
         client.onMessage = (msg)=>{
@@ -59,6 +88,15 @@ const Index = ()=>{
     const createSessionClick = ()=>{
         const name = prompt("Session Name", "New Session");
         client.sendCreateSession(name);
+    }
+
+    const ping = ()=>{
+        const nowMs = (new Date()).getTime();
+        client.sendAppMessageAsJson<AppMsg>({
+            ping:{
+                dt:nowMs
+            }
+        }, session.owner);
     }
 
     const joinClick = (sessionId:number, passwordProtected:boolean)=>{
@@ -101,10 +139,11 @@ const Index = ()=>{
                 :
                 <div>
                     <textarea readOnly style={{width:'50vw', height:'50vh'}} value={chat}>
-
                     </textarea>
                     <br/>
                     <input disabled = {!client.isConnected} style={{width:'50vw'}} value={textBuffer} onKeyUp={(e)=>e.keyCode == 13 ? submit() : undefined} onChange={(e)=>setTextBuffer(e.target.value)}></input>
+                    <br/>
+                    <button onClick={()=>ping()}>Ping!</button>
                 </div>
         }
     </div>

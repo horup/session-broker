@@ -122,22 +122,22 @@ export class MasterClient
         return true;
     }
 
-    public sendAppMessage(data:Uint8Array, to:number = undefined, loopback:boolean = undefined)
+    public sendAppMessage(data:Uint8Array, to:number = undefined)
     {
         this.send(new ClientMsg({
             appMsg:{
                 data:data,
-                loopback:loopback,
+                loopback:true,
                 to:to
             }
         }))
     }
 
-    public sendAppMessageAsJson<T>(object:T, to:number = undefined, loopback:boolean = undefined)
+    public sendAppMessageAsJson<T>(object:T, to:number = undefined)
     {
         let s = JSON.stringify(object);
         let te = new TextEncoder();
-        this.sendAppMessage(te.encode(s), to, loopback);
+        this.sendAppMessage(te.encode(s), to);
     }
 
     public sendCreateSession(name:string, password:string = undefined):boolean

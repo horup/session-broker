@@ -69,7 +69,6 @@ redis.subscribeSessionSwitch((sessionSwitch)=>{
     if (ws != null)
     {
         const sessionid = sessionSwitch.session != null ? sessionSwitch.session.id : null;
-
         {
             const serverMsg = new ServerMsg({
                 currentSessionChanged:{
@@ -103,9 +102,9 @@ redis.setAppReplyHandler(async (app)=>{
         if (c.session == app.sessionId)
         {
 
-            if (clientId == app.fromClientId && !app.loopback)
+         /*   if (clientId == app.fromClientId && !app.loopback)
                 return; // dont sent to client if sender == receiver and loopback is false
-
+*/
             if (app.toClientId != null && app.toClientId != clientId)
                 return; // dont sent to client if the message is not intended for this client
 
