@@ -10,21 +10,20 @@ redis.subscribeCreateSession(async (createSession)=>{
     {
         const sessionId = await redis.newId();
         info(`session created with ${JSON.stringify(createSession)} on node ${config.ID}`);
-
-        await redis.setSession({
+        const session = {
             id:sessionId,
             name:createSession.name,
             owner:createSession.owner,
             password:createSession.password,
             nodeId:config.ID,
             clients:[]
-        })
+        };
+        
+        await redis.setSession(session);
 
         await redis.publishSessionSwitch({
             clientId:createSession.owner,
-            owner:createSession.owner,
-            sessionId:sessionId,
-            name:createSession.name
+            session:session
         })
 
         await redis.publishSessionCreated({
@@ -92,9 +91,7 @@ redis.subscribeJoin(async (join)=>{
         info(`client asked to join with ${JSON.stringify(join)}`);
         redis.publishSessionSwitch({
             clientId:join.clientId,
-            owner:session.owner,
-            sessionId:session.id,
-            name:session.name
+            session:session
         })
     }
     else
@@ -122,9 +119,7 @@ async function tick()
                 {
                     redis.publishSessionSwitch({
                         clientId:c.id,
-                        sessionId:null,
-                        owner:null,
-                        name:null
+                        session:null
                     })
                 }
                 

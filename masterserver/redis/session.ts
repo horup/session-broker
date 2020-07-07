@@ -3,10 +3,8 @@ import { info } from "../log";
 
 export interface SessionSwitchMsg
 {
+    session?:Session;
     clientId:number;
-    sessionId:number;
-    name:string;
-    owner:number;
 }
 
 export interface SessionChangeMsg

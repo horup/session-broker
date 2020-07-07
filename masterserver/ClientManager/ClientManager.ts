@@ -68,24 +68,25 @@ redis.subscribeSessionSwitch((sessionSwitch)=>{
     const ws = localClientSockets.get(clientId);
     if (ws != null)
     {
+        const sessionid = sessionSwitch.session != null ? sessionSwitch.session.id : null;
+
         {
             const serverMsg = new ServerMsg({
                 currentSessionChanged:{
-                    session:sessionSwitch
+                    session:sessionSwitch.session
                 }
             })
 
-            redis.setClient(clientId, {id:clientId, session:sessionSwitch.sessionId});
+            redis.setClient(clientId, {id:clientId, session:sessionid});
             ws.send(ServerMsg.encode(serverMsg).finish());
         }
 
-        const sessionid = sessionSwitch.sessionId;
 
         // Local Client has joined a session, subscribe to it if not done already
         if (!subscribedToSession.has(sessionid))
         {
-            info(`subscribed to local session with id ${sessionSwitch.sessionId}`);
-            redis.subscribeApp(sessionSwitch.sessionId);
+            info(`subscribed to local session with id ${sessionid}`);
+            redis.subscribeApp(sessionid);
             subscribedToSession.set(sessionid, 1);
         }
         else
