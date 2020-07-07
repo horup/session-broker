@@ -92,6 +92,23 @@ export async function publishSessionCreated(session:SessionCreated)
 
 
 
+export function subscribeSessionDeleted(f:(s:Session)=>any)
+{
+    subscriber.subscribe("sessiondeleted");
+    subscriber.on('message', (channel, value)=>{
+        if (channel == 'sessiondeleted')
+            f(JSON.parse(value));
+    });
+}
+
+export async function publishSessionDeleted(session:Session)
+{
+    const res = await redis.publish("sessiondeleted", JSON.stringify(session));
+}
+
+
+
+
 
 
 export interface Session

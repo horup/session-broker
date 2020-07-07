@@ -121,6 +121,14 @@ redis.subscribeSessionCreated(async (sessionCreated)=>{
     })
 })
 
+
+redis.subscribeSessionDeleted(async ()=>{
+    // session deleted, transmit new list of avaliable sessions
+    localClientSockets.forEach(ws=>{
+        sendSessions(ws);
+    })
+})
+
 async function sendSessions(ws:WebSocket)
 {
     const sessions = await redis.getSessions();

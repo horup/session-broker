@@ -127,9 +127,11 @@ async function tick()
                         name:null
                     })
                 }
-                // and delete the session
+                
+                // and delete the session and inform
                 await redis.deleteSession(session.id);
                 info(`session ${session.id} deleted, owner ${owner} is no longer there`);
+                await redis.publishSessionDeleted(session);
 
             }
             else
