@@ -1,5 +1,6 @@
 import {ClientMsg, ServerMsg, ISession} from '../shared';
 import { ENGINE_METHOD_DIGESTS } from 'constants';
+import { SessionState } from 'http2';
 export * from '../shared';
 export interface Client
 {
@@ -13,22 +14,19 @@ export class MasterClient
 {
     private ws:WebSocket;
     private _clientId:number;
-    private _sessionName:string;
-    private _sessionOwnerId:number;
-    private _sessionId:number;
     private _connected = false;
-    private _sessions = [] as ISession[]; 
+    private _avaliableSessions = [] as ISession[]; 
     private _clients = [] as Client[];
-    private _session = null as Session;
+    private _currentSession = null as Session;
 
     get clients()
     {
         return this._clients;
     }
 
-    get session()
+    get currentSession()
     {
-        return this._session;
+        return this._currentSession;
     }
 
     get clientId()
@@ -36,14 +34,9 @@ export class MasterClient
         return this._clientId;
     }
 
-    get sessions()
+    get avaliableSessions()
     {
-        return this._sessions;
-    }
-
-    get sessionId()
-    {
-        return this._sessionId;
+        return this._avaliableSessions;
     }
 
     get isConnected()
@@ -51,19 +44,9 @@ export class MasterClient
         return this._connected;
     }
 
-    get sessionName()
-    {
-        return this._sessionName;
-    }
-
-    get sessionOwnerId()
-    {
-        return this._sessionOwnerId;
-    }
-
     get isSessionOwner():boolean
     {
-        return this.isConnected && this.sessionOwnerId == this.clientId;
+        return this.isConnected && this.currentSession != null && this.currentSession.owner == this.clientId;
     }
 
     public connect(url:string)
@@ -77,51 +60,37 @@ export class MasterClient
         this.ws.onmessage = async (msg)=> {
             const buffer = msg.data as ArrayBuffer;
             const serverMsg = ServerMsg.decode(new Uint8Array(buffer));
-            if (serverMsg.welcomeMsg)
+            if (serverMsg.welcome)
             {
-                this._clientId = serverMsg.welcomeMsg.clientId;
+                this._clientId = serverMsg.welcome.clientId;
                 this._connected = true;
                 this.onConnectionChange(this.isConnected, this.clientId)
             }
-            else if (serverMsg.sessionAccept)
+            else if (serverMsg.currentSessionChanged)
             {
-                this._sessionId = serverMsg.sessionAccept.sesionId;
-                this._sessionName = serverMsg.sessionAccept.name;
-                this._sessionOwnerId = serverMsg.sessionAccept.ownerId;
-                this.onSessionChange({
-                    clients:[],
-                    id:this._sessionId,
-                    name:this._sessionName,
-                    owner:this._sessionOwnerId
-                })
+                this._currentSession = serverMsg.currentSessionChanged.session;
+                this.onSessionChange(this.currentSession)
             }
-            else if (serverMsg.sessions)
+            else if (serverMsg.avaliableSessionsChanged)
             {
-                const s = serverMsg.sessions.sessions;
-                this._sessions = s;
-                this.onSessionsChange(this.sessions);
+                this._avaliableSessions = serverMsg.avaliableSessionsChanged.sessions;
+                this.onSessionsChange(this.avaliableSessions);
             }
-            else if (serverMsg.appMsg)
+            else if (serverMsg.app)
             {
                 let te = new TextDecoder();
-                let json = te.decode(serverMsg.appMsg.data);
+                let json = te.decode(serverMsg.app.data);
                 const o = JSON.parse(json);
-                this.onAppMsgFromJson(serverMsg.appMsg.from, o);
-            }
-            else if (serverMsg.session)
-            {
-                this._session = serverMsg.session;
-                this.onSessionChange(this.session as Session);
-                /*this._clients = serverMsg.clients.clients as Client[];
-                this.onClientsChange(this.clients);*/
-            }
-            
+                this.onAppMsgFromJson(serverMsg.app.from, o);
+            }            
 
             this.onMessage(serverMsg);
         }
 
         this.ws.onclose = ()=>{
             this._connected = false;
+            this._currentSession = null;
+            this.onSessionChange(this._currentSession);
             this.onConnectionChange(this.isConnected, this.clientId);
             setTimeout(()=>{
                 this.connect(url);
@@ -137,7 +106,7 @@ export class MasterClient
     
     onAppMsgFromJson = <AppMsg>(fromId:number, app:AppMsg)=>{}
     onConnectionChange = (connected:boolean, clientId:number)=>{}
-    onSessionChange = (session:Session)=>{};
+    onSessionChange = (sesssion?:(Session))=>{};
     onSessionsChange = (sessions:Session[])=>{};
     onClientsChange = (clients:Client[])=>{};
 

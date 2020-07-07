@@ -3,13 +3,29 @@ import "google/protobuf/any.proto";
 
 message ServerMsg {
     oneof msg {
-        ServerAppMsg appMsg = 1;
-        ServerWelcomeMsg welcomeMsg = 100;
-        ServerSessionAcceptMsg sessionAccept = 101;
-        ServerSessionsMsg sessions = 102;
-        Session session = 103;
-
+        ServerApp app = 1;
+        ServerWelcome welcome = 100;
+        ServerCurrentSessionChanged currentSessionChanged = 101;
+        ServerAvaliableSessionsChanged avaliableSessionsChanged = 102;
     }
+}
+
+message ServerApp {
+    uint32 from = 1;
+    bytes data = 2;
+}
+
+message ServerWelcome {
+    uint32 clientId = 1;
+}
+
+message ServerAvaliableSessionsChanged
+ {
+    repeated Session sessions = 2;
+}
+
+message ServerCurrentSessionChanged {
+    Session session = 1;
 }
 
 message ClientMsg {
@@ -28,48 +44,32 @@ message ConnectedClientsMsg {
     repeated Client clients = 1;
 }
 
-/**Connect to the master server */
 message ClientConnectMsg {
 
 }
 
-/**Refresh Master Server list*/
 message ClientRefreshSessionsMsg {
 
 }
 
-/**Client connection established with the contained clientId*/
-message ServerWelcomeMsg {
-    uint32 clientId = 1;
-}
 
-/** Join the session with given id */
 message ClientJoinSessionMsg {
     uint32 sessionId = 1;
 }
 
-/** Create a session with the given name and password */
 message ClientCreateSessionMsg {
     string name = 1;
     string password = 2;
 }
 
-/**Session join or create has been accepted. */
-message ServerSessionAcceptMsg {
-    uint32 sesionId = 1;
-    uint32 ownerId = 2;
-    string name = 3;
-}
+
+
 message ClientAppMsg {
     uint32 to = 1;
     bytes data = 2;
     bool loopback = 3;
 }
 
-message ServerAppMsg {
-    uint32 from = 1;
-    bytes data = 2;
-}
 
 message Session {
     uint32 id = 1;
@@ -77,8 +77,4 @@ message Session {
     string name = 3;
     bool passwordProtected = 4;
     repeated uint32 clients = 5;
-}
-
-message ServerSessionsMsg {
-    repeated Session sessions = 2;
 }

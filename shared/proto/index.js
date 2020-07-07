@@ -15,11 +15,10 @@ $root.ServerMsg = (function() {
      * Properties of a ServerMsg.
      * @exports IServerMsg
      * @interface IServerMsg
-     * @property {IServerAppMsg|null} [appMsg] ServerMsg appMsg
-     * @property {IServerWelcomeMsg|null} [welcomeMsg] ServerMsg welcomeMsg
-     * @property {IServerSessionAcceptMsg|null} [sessionAccept] ServerMsg sessionAccept
-     * @property {IServerSessionsMsg|null} [sessions] ServerMsg sessions
-     * @property {ISession|null} [session] ServerMsg session
+     * @property {IServerApp|null} [app] ServerMsg app
+     * @property {IServerWelcome|null} [welcome] ServerMsg welcome
+     * @property {IServerCurrentSessionChanged|null} [currentSessionChanged] ServerMsg currentSessionChanged
+     * @property {IServerAvaliableSessionsChanged|null} [avaliableSessionsChanged] ServerMsg avaliableSessionsChanged
      */
 
     /**
@@ -38,56 +37,48 @@ $root.ServerMsg = (function() {
     }
 
     /**
-     * ServerMsg appMsg.
-     * @member {IServerAppMsg|null|undefined} appMsg
+     * ServerMsg app.
+     * @member {IServerApp|null|undefined} app
      * @memberof ServerMsg
      * @instance
      */
-    ServerMsg.prototype.appMsg = null;
+    ServerMsg.prototype.app = null;
 
     /**
-     * ServerMsg welcomeMsg.
-     * @member {IServerWelcomeMsg|null|undefined} welcomeMsg
+     * ServerMsg welcome.
+     * @member {IServerWelcome|null|undefined} welcome
      * @memberof ServerMsg
      * @instance
      */
-    ServerMsg.prototype.welcomeMsg = null;
+    ServerMsg.prototype.welcome = null;
 
     /**
-     * ServerMsg sessionAccept.
-     * @member {IServerSessionAcceptMsg|null|undefined} sessionAccept
+     * ServerMsg currentSessionChanged.
+     * @member {IServerCurrentSessionChanged|null|undefined} currentSessionChanged
      * @memberof ServerMsg
      * @instance
      */
-    ServerMsg.prototype.sessionAccept = null;
+    ServerMsg.prototype.currentSessionChanged = null;
 
     /**
-     * ServerMsg sessions.
-     * @member {IServerSessionsMsg|null|undefined} sessions
+     * ServerMsg avaliableSessionsChanged.
+     * @member {IServerAvaliableSessionsChanged|null|undefined} avaliableSessionsChanged
      * @memberof ServerMsg
      * @instance
      */
-    ServerMsg.prototype.sessions = null;
-
-    /**
-     * ServerMsg session.
-     * @member {ISession|null|undefined} session
-     * @memberof ServerMsg
-     * @instance
-     */
-    ServerMsg.prototype.session = null;
+    ServerMsg.prototype.avaliableSessionsChanged = null;
 
     // OneOf field names bound to virtual getters and setters
     var $oneOfFields;
 
     /**
      * ServerMsg msg.
-     * @member {"appMsg"|"welcomeMsg"|"sessionAccept"|"sessions"|"session"|undefined} msg
+     * @member {"app"|"welcome"|"currentSessionChanged"|"avaliableSessionsChanged"|undefined} msg
      * @memberof ServerMsg
      * @instance
      */
     Object.defineProperty(ServerMsg.prototype, "msg", {
-        get: $util.oneOfGetter($oneOfFields = ["appMsg", "welcomeMsg", "sessionAccept", "sessions", "session"]),
+        get: $util.oneOfGetter($oneOfFields = ["app", "welcome", "currentSessionChanged", "avaliableSessionsChanged"]),
         set: $util.oneOfSetter($oneOfFields)
     });
 
@@ -115,16 +106,14 @@ $root.ServerMsg = (function() {
     ServerMsg.encode = function encode(message, writer) {
         if (!writer)
             writer = $Writer.create();
-        if (message.appMsg != null && Object.hasOwnProperty.call(message, "appMsg"))
-            $root.ServerAppMsg.encode(message.appMsg, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
-        if (message.welcomeMsg != null && Object.hasOwnProperty.call(message, "welcomeMsg"))
-            $root.ServerWelcomeMsg.encode(message.welcomeMsg, writer.uint32(/* id 100, wireType 2 =*/802).fork()).ldelim();
-        if (message.sessionAccept != null && Object.hasOwnProperty.call(message, "sessionAccept"))
-            $root.ServerSessionAcceptMsg.encode(message.sessionAccept, writer.uint32(/* id 101, wireType 2 =*/810).fork()).ldelim();
-        if (message.sessions != null && Object.hasOwnProperty.call(message, "sessions"))
-            $root.ServerSessionsMsg.encode(message.sessions, writer.uint32(/* id 102, wireType 2 =*/818).fork()).ldelim();
-        if (message.session != null && Object.hasOwnProperty.call(message, "session"))
-            $root.Session.encode(message.session, writer.uint32(/* id 103, wireType 2 =*/826).fork()).ldelim();
+        if (message.app != null && Object.hasOwnProperty.call(message, "app"))
+            $root.ServerApp.encode(message.app, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+        if (message.welcome != null && Object.hasOwnProperty.call(message, "welcome"))
+            $root.ServerWelcome.encode(message.welcome, writer.uint32(/* id 100, wireType 2 =*/802).fork()).ldelim();
+        if (message.currentSessionChanged != null && Object.hasOwnProperty.call(message, "currentSessionChanged"))
+            $root.ServerCurrentSessionChanged.encode(message.currentSessionChanged, writer.uint32(/* id 101, wireType 2 =*/810).fork()).ldelim();
+        if (message.avaliableSessionsChanged != null && Object.hasOwnProperty.call(message, "avaliableSessionsChanged"))
+            $root.ServerAvaliableSessionsChanged.encode(message.avaliableSessionsChanged, writer.uint32(/* id 102, wireType 2 =*/818).fork()).ldelim();
         return writer;
     };
 
@@ -160,19 +149,16 @@ $root.ServerMsg = (function() {
             var tag = reader.uint32();
             switch (tag >>> 3) {
             case 1:
-                message.appMsg = $root.ServerAppMsg.decode(reader, reader.uint32());
+                message.app = $root.ServerApp.decode(reader, reader.uint32());
                 break;
             case 100:
-                message.welcomeMsg = $root.ServerWelcomeMsg.decode(reader, reader.uint32());
+                message.welcome = $root.ServerWelcome.decode(reader, reader.uint32());
                 break;
             case 101:
-                message.sessionAccept = $root.ServerSessionAcceptMsg.decode(reader, reader.uint32());
+                message.currentSessionChanged = $root.ServerCurrentSessionChanged.decode(reader, reader.uint32());
                 break;
             case 102:
-                message.sessions = $root.ServerSessionsMsg.decode(reader, reader.uint32());
-                break;
-            case 103:
-                message.session = $root.Session.decode(reader, reader.uint32());
+                message.avaliableSessionsChanged = $root.ServerAvaliableSessionsChanged.decode(reader, reader.uint32());
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -210,52 +196,42 @@ $root.ServerMsg = (function() {
         if (typeof message !== "object" || message === null)
             return "object expected";
         var properties = {};
-        if (message.appMsg != null && message.hasOwnProperty("appMsg")) {
+        if (message.app != null && message.hasOwnProperty("app")) {
             properties.msg = 1;
             {
-                var error = $root.ServerAppMsg.verify(message.appMsg);
+                var error = $root.ServerApp.verify(message.app);
                 if (error)
-                    return "appMsg." + error;
+                    return "app." + error;
             }
         }
-        if (message.welcomeMsg != null && message.hasOwnProperty("welcomeMsg")) {
+        if (message.welcome != null && message.hasOwnProperty("welcome")) {
             if (properties.msg === 1)
                 return "msg: multiple values";
             properties.msg = 1;
             {
-                var error = $root.ServerWelcomeMsg.verify(message.welcomeMsg);
+                var error = $root.ServerWelcome.verify(message.welcome);
                 if (error)
-                    return "welcomeMsg." + error;
+                    return "welcome." + error;
             }
         }
-        if (message.sessionAccept != null && message.hasOwnProperty("sessionAccept")) {
+        if (message.currentSessionChanged != null && message.hasOwnProperty("currentSessionChanged")) {
             if (properties.msg === 1)
                 return "msg: multiple values";
             properties.msg = 1;
             {
-                var error = $root.ServerSessionAcceptMsg.verify(message.sessionAccept);
+                var error = $root.ServerCurrentSessionChanged.verify(message.currentSessionChanged);
                 if (error)
-                    return "sessionAccept." + error;
+                    return "currentSessionChanged." + error;
             }
         }
-        if (message.sessions != null && message.hasOwnProperty("sessions")) {
+        if (message.avaliableSessionsChanged != null && message.hasOwnProperty("avaliableSessionsChanged")) {
             if (properties.msg === 1)
                 return "msg: multiple values";
             properties.msg = 1;
             {
-                var error = $root.ServerSessionsMsg.verify(message.sessions);
+                var error = $root.ServerAvaliableSessionsChanged.verify(message.avaliableSessionsChanged);
                 if (error)
-                    return "sessions." + error;
-            }
-        }
-        if (message.session != null && message.hasOwnProperty("session")) {
-            if (properties.msg === 1)
-                return "msg: multiple values";
-            properties.msg = 1;
-            {
-                var error = $root.Session.verify(message.session);
-                if (error)
-                    return "session." + error;
+                    return "avaliableSessionsChanged." + error;
             }
         }
         return null;
@@ -273,30 +249,25 @@ $root.ServerMsg = (function() {
         if (object instanceof $root.ServerMsg)
             return object;
         var message = new $root.ServerMsg();
-        if (object.appMsg != null) {
-            if (typeof object.appMsg !== "object")
-                throw TypeError(".ServerMsg.appMsg: object expected");
-            message.appMsg = $root.ServerAppMsg.fromObject(object.appMsg);
+        if (object.app != null) {
+            if (typeof object.app !== "object")
+                throw TypeError(".ServerMsg.app: object expected");
+            message.app = $root.ServerApp.fromObject(object.app);
         }
-        if (object.welcomeMsg != null) {
-            if (typeof object.welcomeMsg !== "object")
-                throw TypeError(".ServerMsg.welcomeMsg: object expected");
-            message.welcomeMsg = $root.ServerWelcomeMsg.fromObject(object.welcomeMsg);
+        if (object.welcome != null) {
+            if (typeof object.welcome !== "object")
+                throw TypeError(".ServerMsg.welcome: object expected");
+            message.welcome = $root.ServerWelcome.fromObject(object.welcome);
         }
-        if (object.sessionAccept != null) {
-            if (typeof object.sessionAccept !== "object")
-                throw TypeError(".ServerMsg.sessionAccept: object expected");
-            message.sessionAccept = $root.ServerSessionAcceptMsg.fromObject(object.sessionAccept);
+        if (object.currentSessionChanged != null) {
+            if (typeof object.currentSessionChanged !== "object")
+                throw TypeError(".ServerMsg.currentSessionChanged: object expected");
+            message.currentSessionChanged = $root.ServerCurrentSessionChanged.fromObject(object.currentSessionChanged);
         }
-        if (object.sessions != null) {
-            if (typeof object.sessions !== "object")
-                throw TypeError(".ServerMsg.sessions: object expected");
-            message.sessions = $root.ServerSessionsMsg.fromObject(object.sessions);
-        }
-        if (object.session != null) {
-            if (typeof object.session !== "object")
-                throw TypeError(".ServerMsg.session: object expected");
-            message.session = $root.Session.fromObject(object.session);
+        if (object.avaliableSessionsChanged != null) {
+            if (typeof object.avaliableSessionsChanged !== "object")
+                throw TypeError(".ServerMsg.avaliableSessionsChanged: object expected");
+            message.avaliableSessionsChanged = $root.ServerAvaliableSessionsChanged.fromObject(object.avaliableSessionsChanged);
         }
         return message;
     };
@@ -314,30 +285,25 @@ $root.ServerMsg = (function() {
         if (!options)
             options = {};
         var object = {};
-        if (message.appMsg != null && message.hasOwnProperty("appMsg")) {
-            object.appMsg = $root.ServerAppMsg.toObject(message.appMsg, options);
+        if (message.app != null && message.hasOwnProperty("app")) {
+            object.app = $root.ServerApp.toObject(message.app, options);
             if (options.oneofs)
-                object.msg = "appMsg";
+                object.msg = "app";
         }
-        if (message.welcomeMsg != null && message.hasOwnProperty("welcomeMsg")) {
-            object.welcomeMsg = $root.ServerWelcomeMsg.toObject(message.welcomeMsg, options);
+        if (message.welcome != null && message.hasOwnProperty("welcome")) {
+            object.welcome = $root.ServerWelcome.toObject(message.welcome, options);
             if (options.oneofs)
-                object.msg = "welcomeMsg";
+                object.msg = "welcome";
         }
-        if (message.sessionAccept != null && message.hasOwnProperty("sessionAccept")) {
-            object.sessionAccept = $root.ServerSessionAcceptMsg.toObject(message.sessionAccept, options);
+        if (message.currentSessionChanged != null && message.hasOwnProperty("currentSessionChanged")) {
+            object.currentSessionChanged = $root.ServerCurrentSessionChanged.toObject(message.currentSessionChanged, options);
             if (options.oneofs)
-                object.msg = "sessionAccept";
+                object.msg = "currentSessionChanged";
         }
-        if (message.sessions != null && message.hasOwnProperty("sessions")) {
-            object.sessions = $root.ServerSessionsMsg.toObject(message.sessions, options);
+        if (message.avaliableSessionsChanged != null && message.hasOwnProperty("avaliableSessionsChanged")) {
+            object.avaliableSessionsChanged = $root.ServerAvaliableSessionsChanged.toObject(message.avaliableSessionsChanged, options);
             if (options.oneofs)
-                object.msg = "sessions";
-        }
-        if (message.session != null && message.hasOwnProperty("session")) {
-            object.session = $root.Session.toObject(message.session, options);
-            if (options.oneofs)
-                object.msg = "session";
+                object.msg = "avaliableSessionsChanged";
         }
         return object;
     };
@@ -354,6 +320,812 @@ $root.ServerMsg = (function() {
     };
 
     return ServerMsg;
+})();
+
+$root.ServerApp = (function() {
+
+    /**
+     * Properties of a ServerApp.
+     * @exports IServerApp
+     * @interface IServerApp
+     * @property {number|null} [from] ServerApp from
+     * @property {Uint8Array|null} [data] ServerApp data
+     */
+
+    /**
+     * Constructs a new ServerApp.
+     * @exports ServerApp
+     * @classdesc Represents a ServerApp.
+     * @implements IServerApp
+     * @constructor
+     * @param {IServerApp=} [properties] Properties to set
+     */
+    function ServerApp(properties) {
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * ServerApp from.
+     * @member {number} from
+     * @memberof ServerApp
+     * @instance
+     */
+    ServerApp.prototype.from = 0;
+
+    /**
+     * ServerApp data.
+     * @member {Uint8Array} data
+     * @memberof ServerApp
+     * @instance
+     */
+    ServerApp.prototype.data = $util.newBuffer([]);
+
+    /**
+     * Creates a new ServerApp instance using the specified properties.
+     * @function create
+     * @memberof ServerApp
+     * @static
+     * @param {IServerApp=} [properties] Properties to set
+     * @returns {ServerApp} ServerApp instance
+     */
+    ServerApp.create = function create(properties) {
+        return new ServerApp(properties);
+    };
+
+    /**
+     * Encodes the specified ServerApp message. Does not implicitly {@link ServerApp.verify|verify} messages.
+     * @function encode
+     * @memberof ServerApp
+     * @static
+     * @param {IServerApp} message ServerApp message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerApp.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.from != null && Object.hasOwnProperty.call(message, "from"))
+            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.from);
+        if (message.data != null && Object.hasOwnProperty.call(message, "data"))
+            writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
+        return writer;
+    };
+
+    /**
+     * Encodes the specified ServerApp message, length delimited. Does not implicitly {@link ServerApp.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof ServerApp
+     * @static
+     * @param {IServerApp} message ServerApp message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerApp.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a ServerApp message from the specified reader or buffer.
+     * @function decode
+     * @memberof ServerApp
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {ServerApp} ServerApp
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerApp.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerApp();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                message.from = reader.uint32();
+                break;
+            case 2:
+                message.data = reader.bytes();
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a ServerApp message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof ServerApp
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {ServerApp} ServerApp
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerApp.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a ServerApp message.
+     * @function verify
+     * @memberof ServerApp
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    ServerApp.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.from != null && message.hasOwnProperty("from"))
+            if (!$util.isInteger(message.from))
+                return "from: integer expected";
+        if (message.data != null && message.hasOwnProperty("data"))
+            if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
+                return "data: buffer expected";
+        return null;
+    };
+
+    /**
+     * Creates a ServerApp message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof ServerApp
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {ServerApp} ServerApp
+     */
+    ServerApp.fromObject = function fromObject(object) {
+        if (object instanceof $root.ServerApp)
+            return object;
+        var message = new $root.ServerApp();
+        if (object.from != null)
+            message.from = object.from >>> 0;
+        if (object.data != null)
+            if (typeof object.data === "string")
+                $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
+            else if (object.data.length)
+                message.data = object.data;
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a ServerApp message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof ServerApp
+     * @static
+     * @param {ServerApp} message ServerApp
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    ServerApp.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.defaults) {
+            object.from = 0;
+            if (options.bytes === String)
+                object.data = "";
+            else {
+                object.data = [];
+                if (options.bytes !== Array)
+                    object.data = $util.newBuffer(object.data);
+            }
+        }
+        if (message.from != null && message.hasOwnProperty("from"))
+            object.from = message.from;
+        if (message.data != null && message.hasOwnProperty("data"))
+            object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
+        return object;
+    };
+
+    /**
+     * Converts this ServerApp to JSON.
+     * @function toJSON
+     * @memberof ServerApp
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    ServerApp.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    return ServerApp;
+})();
+
+$root.ServerWelcome = (function() {
+
+    /**
+     * Properties of a ServerWelcome.
+     * @exports IServerWelcome
+     * @interface IServerWelcome
+     * @property {number|null} [clientId] ServerWelcome clientId
+     */
+
+    /**
+     * Constructs a new ServerWelcome.
+     * @exports ServerWelcome
+     * @classdesc Represents a ServerWelcome.
+     * @implements IServerWelcome
+     * @constructor
+     * @param {IServerWelcome=} [properties] Properties to set
+     */
+    function ServerWelcome(properties) {
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * ServerWelcome clientId.
+     * @member {number} clientId
+     * @memberof ServerWelcome
+     * @instance
+     */
+    ServerWelcome.prototype.clientId = 0;
+
+    /**
+     * Creates a new ServerWelcome instance using the specified properties.
+     * @function create
+     * @memberof ServerWelcome
+     * @static
+     * @param {IServerWelcome=} [properties] Properties to set
+     * @returns {ServerWelcome} ServerWelcome instance
+     */
+    ServerWelcome.create = function create(properties) {
+        return new ServerWelcome(properties);
+    };
+
+    /**
+     * Encodes the specified ServerWelcome message. Does not implicitly {@link ServerWelcome.verify|verify} messages.
+     * @function encode
+     * @memberof ServerWelcome
+     * @static
+     * @param {IServerWelcome} message ServerWelcome message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerWelcome.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
+            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.clientId);
+        return writer;
+    };
+
+    /**
+     * Encodes the specified ServerWelcome message, length delimited. Does not implicitly {@link ServerWelcome.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof ServerWelcome
+     * @static
+     * @param {IServerWelcome} message ServerWelcome message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerWelcome.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a ServerWelcome message from the specified reader or buffer.
+     * @function decode
+     * @memberof ServerWelcome
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {ServerWelcome} ServerWelcome
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerWelcome.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerWelcome();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                message.clientId = reader.uint32();
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a ServerWelcome message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof ServerWelcome
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {ServerWelcome} ServerWelcome
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerWelcome.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a ServerWelcome message.
+     * @function verify
+     * @memberof ServerWelcome
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    ServerWelcome.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.clientId != null && message.hasOwnProperty("clientId"))
+            if (!$util.isInteger(message.clientId))
+                return "clientId: integer expected";
+        return null;
+    };
+
+    /**
+     * Creates a ServerWelcome message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof ServerWelcome
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {ServerWelcome} ServerWelcome
+     */
+    ServerWelcome.fromObject = function fromObject(object) {
+        if (object instanceof $root.ServerWelcome)
+            return object;
+        var message = new $root.ServerWelcome();
+        if (object.clientId != null)
+            message.clientId = object.clientId >>> 0;
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a ServerWelcome message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof ServerWelcome
+     * @static
+     * @param {ServerWelcome} message ServerWelcome
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    ServerWelcome.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.defaults)
+            object.clientId = 0;
+        if (message.clientId != null && message.hasOwnProperty("clientId"))
+            object.clientId = message.clientId;
+        return object;
+    };
+
+    /**
+     * Converts this ServerWelcome to JSON.
+     * @function toJSON
+     * @memberof ServerWelcome
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    ServerWelcome.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    return ServerWelcome;
+})();
+
+$root.ServerAvaliableSessionsChanged = (function() {
+
+    /**
+     * Properties of a ServerAvaliableSessionsChanged.
+     * @exports IServerAvaliableSessionsChanged
+     * @interface IServerAvaliableSessionsChanged
+     * @property {Array.<ISession>|null} [sessions] ServerAvaliableSessionsChanged sessions
+     */
+
+    /**
+     * Constructs a new ServerAvaliableSessionsChanged.
+     * @exports ServerAvaliableSessionsChanged
+     * @classdesc Represents a ServerAvaliableSessionsChanged.
+     * @implements IServerAvaliableSessionsChanged
+     * @constructor
+     * @param {IServerAvaliableSessionsChanged=} [properties] Properties to set
+     */
+    function ServerAvaliableSessionsChanged(properties) {
+        this.sessions = [];
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * ServerAvaliableSessionsChanged sessions.
+     * @member {Array.<ISession>} sessions
+     * @memberof ServerAvaliableSessionsChanged
+     * @instance
+     */
+    ServerAvaliableSessionsChanged.prototype.sessions = $util.emptyArray;
+
+    /**
+     * Creates a new ServerAvaliableSessionsChanged instance using the specified properties.
+     * @function create
+     * @memberof ServerAvaliableSessionsChanged
+     * @static
+     * @param {IServerAvaliableSessionsChanged=} [properties] Properties to set
+     * @returns {ServerAvaliableSessionsChanged} ServerAvaliableSessionsChanged instance
+     */
+    ServerAvaliableSessionsChanged.create = function create(properties) {
+        return new ServerAvaliableSessionsChanged(properties);
+    };
+
+    /**
+     * Encodes the specified ServerAvaliableSessionsChanged message. Does not implicitly {@link ServerAvaliableSessionsChanged.verify|verify} messages.
+     * @function encode
+     * @memberof ServerAvaliableSessionsChanged
+     * @static
+     * @param {IServerAvaliableSessionsChanged} message ServerAvaliableSessionsChanged message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerAvaliableSessionsChanged.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.sessions != null && message.sessions.length)
+            for (var i = 0; i < message.sessions.length; ++i)
+                $root.Session.encode(message.sessions[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+        return writer;
+    };
+
+    /**
+     * Encodes the specified ServerAvaliableSessionsChanged message, length delimited. Does not implicitly {@link ServerAvaliableSessionsChanged.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof ServerAvaliableSessionsChanged
+     * @static
+     * @param {IServerAvaliableSessionsChanged} message ServerAvaliableSessionsChanged message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerAvaliableSessionsChanged.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a ServerAvaliableSessionsChanged message from the specified reader or buffer.
+     * @function decode
+     * @memberof ServerAvaliableSessionsChanged
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {ServerAvaliableSessionsChanged} ServerAvaliableSessionsChanged
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerAvaliableSessionsChanged.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerAvaliableSessionsChanged();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 2:
+                if (!(message.sessions && message.sessions.length))
+                    message.sessions = [];
+                message.sessions.push($root.Session.decode(reader, reader.uint32()));
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a ServerAvaliableSessionsChanged message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof ServerAvaliableSessionsChanged
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {ServerAvaliableSessionsChanged} ServerAvaliableSessionsChanged
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerAvaliableSessionsChanged.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a ServerAvaliableSessionsChanged message.
+     * @function verify
+     * @memberof ServerAvaliableSessionsChanged
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    ServerAvaliableSessionsChanged.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.sessions != null && message.hasOwnProperty("sessions")) {
+            if (!Array.isArray(message.sessions))
+                return "sessions: array expected";
+            for (var i = 0; i < message.sessions.length; ++i) {
+                var error = $root.Session.verify(message.sessions[i]);
+                if (error)
+                    return "sessions." + error;
+            }
+        }
+        return null;
+    };
+
+    /**
+     * Creates a ServerAvaliableSessionsChanged message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof ServerAvaliableSessionsChanged
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {ServerAvaliableSessionsChanged} ServerAvaliableSessionsChanged
+     */
+    ServerAvaliableSessionsChanged.fromObject = function fromObject(object) {
+        if (object instanceof $root.ServerAvaliableSessionsChanged)
+            return object;
+        var message = new $root.ServerAvaliableSessionsChanged();
+        if (object.sessions) {
+            if (!Array.isArray(object.sessions))
+                throw TypeError(".ServerAvaliableSessionsChanged.sessions: array expected");
+            message.sessions = [];
+            for (var i = 0; i < object.sessions.length; ++i) {
+                if (typeof object.sessions[i] !== "object")
+                    throw TypeError(".ServerAvaliableSessionsChanged.sessions: object expected");
+                message.sessions[i] = $root.Session.fromObject(object.sessions[i]);
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a ServerAvaliableSessionsChanged message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof ServerAvaliableSessionsChanged
+     * @static
+     * @param {ServerAvaliableSessionsChanged} message ServerAvaliableSessionsChanged
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    ServerAvaliableSessionsChanged.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.arrays || options.defaults)
+            object.sessions = [];
+        if (message.sessions && message.sessions.length) {
+            object.sessions = [];
+            for (var j = 0; j < message.sessions.length; ++j)
+                object.sessions[j] = $root.Session.toObject(message.sessions[j], options);
+        }
+        return object;
+    };
+
+    /**
+     * Converts this ServerAvaliableSessionsChanged to JSON.
+     * @function toJSON
+     * @memberof ServerAvaliableSessionsChanged
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    ServerAvaliableSessionsChanged.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    return ServerAvaliableSessionsChanged;
+})();
+
+$root.ServerCurrentSessionChanged = (function() {
+
+    /**
+     * Properties of a ServerCurrentSessionChanged.
+     * @exports IServerCurrentSessionChanged
+     * @interface IServerCurrentSessionChanged
+     * @property {ISession|null} [session] ServerCurrentSessionChanged session
+     */
+
+    /**
+     * Constructs a new ServerCurrentSessionChanged.
+     * @exports ServerCurrentSessionChanged
+     * @classdesc Represents a ServerCurrentSessionChanged.
+     * @implements IServerCurrentSessionChanged
+     * @constructor
+     * @param {IServerCurrentSessionChanged=} [properties] Properties to set
+     */
+    function ServerCurrentSessionChanged(properties) {
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+
+    /**
+     * ServerCurrentSessionChanged session.
+     * @member {ISession|null|undefined} session
+     * @memberof ServerCurrentSessionChanged
+     * @instance
+     */
+    ServerCurrentSessionChanged.prototype.session = null;
+
+    /**
+     * Creates a new ServerCurrentSessionChanged instance using the specified properties.
+     * @function create
+     * @memberof ServerCurrentSessionChanged
+     * @static
+     * @param {IServerCurrentSessionChanged=} [properties] Properties to set
+     * @returns {ServerCurrentSessionChanged} ServerCurrentSessionChanged instance
+     */
+    ServerCurrentSessionChanged.create = function create(properties) {
+        return new ServerCurrentSessionChanged(properties);
+    };
+
+    /**
+     * Encodes the specified ServerCurrentSessionChanged message. Does not implicitly {@link ServerCurrentSessionChanged.verify|verify} messages.
+     * @function encode
+     * @memberof ServerCurrentSessionChanged
+     * @static
+     * @param {IServerCurrentSessionChanged} message ServerCurrentSessionChanged message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerCurrentSessionChanged.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.session != null && Object.hasOwnProperty.call(message, "session"))
+            $root.Session.encode(message.session, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+        return writer;
+    };
+
+    /**
+     * Encodes the specified ServerCurrentSessionChanged message, length delimited. Does not implicitly {@link ServerCurrentSessionChanged.verify|verify} messages.
+     * @function encodeDelimited
+     * @memberof ServerCurrentSessionChanged
+     * @static
+     * @param {IServerCurrentSessionChanged} message ServerCurrentSessionChanged message or plain object to encode
+     * @param {$protobuf.Writer} [writer] Writer to encode to
+     * @returns {$protobuf.Writer} Writer
+     */
+    ServerCurrentSessionChanged.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+
+    /**
+     * Decodes a ServerCurrentSessionChanged message from the specified reader or buffer.
+     * @function decode
+     * @memberof ServerCurrentSessionChanged
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @param {number} [length] Message length if known beforehand
+     * @returns {ServerCurrentSessionChanged} ServerCurrentSessionChanged
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerCurrentSessionChanged.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerCurrentSessionChanged();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                message.session = $root.Session.decode(reader, reader.uint32());
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+
+    /**
+     * Decodes a ServerCurrentSessionChanged message from the specified reader or buffer, length delimited.
+     * @function decodeDelimited
+     * @memberof ServerCurrentSessionChanged
+     * @static
+     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+     * @returns {ServerCurrentSessionChanged} ServerCurrentSessionChanged
+     * @throws {Error} If the payload is not a reader or valid buffer
+     * @throws {$protobuf.util.ProtocolError} If required fields are missing
+     */
+    ServerCurrentSessionChanged.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+
+    /**
+     * Verifies a ServerCurrentSessionChanged message.
+     * @function verify
+     * @memberof ServerCurrentSessionChanged
+     * @static
+     * @param {Object.<string,*>} message Plain object to verify
+     * @returns {string|null} `null` if valid, otherwise the reason why it is not
+     */
+    ServerCurrentSessionChanged.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.session != null && message.hasOwnProperty("session")) {
+            var error = $root.Session.verify(message.session);
+            if (error)
+                return "session." + error;
+        }
+        return null;
+    };
+
+    /**
+     * Creates a ServerCurrentSessionChanged message from a plain object. Also converts values to their respective internal types.
+     * @function fromObject
+     * @memberof ServerCurrentSessionChanged
+     * @static
+     * @param {Object.<string,*>} object Plain object
+     * @returns {ServerCurrentSessionChanged} ServerCurrentSessionChanged
+     */
+    ServerCurrentSessionChanged.fromObject = function fromObject(object) {
+        if (object instanceof $root.ServerCurrentSessionChanged)
+            return object;
+        var message = new $root.ServerCurrentSessionChanged();
+        if (object.session != null) {
+            if (typeof object.session !== "object")
+                throw TypeError(".ServerCurrentSessionChanged.session: object expected");
+            message.session = $root.Session.fromObject(object.session);
+        }
+        return message;
+    };
+
+    /**
+     * Creates a plain object from a ServerCurrentSessionChanged message. Also converts values to other types if specified.
+     * @function toObject
+     * @memberof ServerCurrentSessionChanged
+     * @static
+     * @param {ServerCurrentSessionChanged} message ServerCurrentSessionChanged
+     * @param {$protobuf.IConversionOptions} [options] Conversion options
+     * @returns {Object.<string,*>} Plain object
+     */
+    ServerCurrentSessionChanged.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.defaults)
+            object.session = null;
+        if (message.session != null && message.hasOwnProperty("session"))
+            object.session = $root.Session.toObject(message.session, options);
+        return object;
+    };
+
+    /**
+     * Converts this ServerCurrentSessionChanged to JSON.
+     * @function toJSON
+     * @memberof ServerCurrentSessionChanged
+     * @instance
+     * @returns {Object.<string,*>} JSON object
+     */
+    ServerCurrentSessionChanged.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+
+    return ServerCurrentSessionChanged;
 })();
 
 $root.ClientMsg = (function() {
@@ -1109,7 +1881,7 @@ $root.ClientConnectMsg = (function() {
     /**
      * Constructs a new ClientConnectMsg.
      * @exports ClientConnectMsg
-     * @classdesc Connect to the master server
+     * @classdesc Represents a ClientConnectMsg.
      * @implements IClientConnectMsg
      * @constructor
      * @param {IClientConnectMsg=} [properties] Properties to set
@@ -1269,7 +2041,7 @@ $root.ClientRefreshSessionsMsg = (function() {
     /**
      * Constructs a new ClientRefreshSessionsMsg.
      * @exports ClientRefreshSessionsMsg
-     * @classdesc Refresh Master Server list
+     * @classdesc Represents a ClientRefreshSessionsMsg.
      * @implements IClientRefreshSessionsMsg
      * @constructor
      * @param {IClientRefreshSessionsMsg=} [properties] Properties to set
@@ -1418,193 +2190,6 @@ $root.ClientRefreshSessionsMsg = (function() {
     return ClientRefreshSessionsMsg;
 })();
 
-$root.ServerWelcomeMsg = (function() {
-
-    /**
-     * Properties of a ServerWelcomeMsg.
-     * @exports IServerWelcomeMsg
-     * @interface IServerWelcomeMsg
-     * @property {number|null} [clientId] ServerWelcomeMsg clientId
-     */
-
-    /**
-     * Constructs a new ServerWelcomeMsg.
-     * @exports ServerWelcomeMsg
-     * @classdesc Client connection established with the contained clientId
-     * @implements IServerWelcomeMsg
-     * @constructor
-     * @param {IServerWelcomeMsg=} [properties] Properties to set
-     */
-    function ServerWelcomeMsg(properties) {
-        if (properties)
-            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                if (properties[keys[i]] != null)
-                    this[keys[i]] = properties[keys[i]];
-    }
-
-    /**
-     * ServerWelcomeMsg clientId.
-     * @member {number} clientId
-     * @memberof ServerWelcomeMsg
-     * @instance
-     */
-    ServerWelcomeMsg.prototype.clientId = 0;
-
-    /**
-     * Creates a new ServerWelcomeMsg instance using the specified properties.
-     * @function create
-     * @memberof ServerWelcomeMsg
-     * @static
-     * @param {IServerWelcomeMsg=} [properties] Properties to set
-     * @returns {ServerWelcomeMsg} ServerWelcomeMsg instance
-     */
-    ServerWelcomeMsg.create = function create(properties) {
-        return new ServerWelcomeMsg(properties);
-    };
-
-    /**
-     * Encodes the specified ServerWelcomeMsg message. Does not implicitly {@link ServerWelcomeMsg.verify|verify} messages.
-     * @function encode
-     * @memberof ServerWelcomeMsg
-     * @static
-     * @param {IServerWelcomeMsg} message ServerWelcomeMsg message or plain object to encode
-     * @param {$protobuf.Writer} [writer] Writer to encode to
-     * @returns {$protobuf.Writer} Writer
-     */
-    ServerWelcomeMsg.encode = function encode(message, writer) {
-        if (!writer)
-            writer = $Writer.create();
-        if (message.clientId != null && Object.hasOwnProperty.call(message, "clientId"))
-            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.clientId);
-        return writer;
-    };
-
-    /**
-     * Encodes the specified ServerWelcomeMsg message, length delimited. Does not implicitly {@link ServerWelcomeMsg.verify|verify} messages.
-     * @function encodeDelimited
-     * @memberof ServerWelcomeMsg
-     * @static
-     * @param {IServerWelcomeMsg} message ServerWelcomeMsg message or plain object to encode
-     * @param {$protobuf.Writer} [writer] Writer to encode to
-     * @returns {$protobuf.Writer} Writer
-     */
-    ServerWelcomeMsg.encodeDelimited = function encodeDelimited(message, writer) {
-        return this.encode(message, writer).ldelim();
-    };
-
-    /**
-     * Decodes a ServerWelcomeMsg message from the specified reader or buffer.
-     * @function decode
-     * @memberof ServerWelcomeMsg
-     * @static
-     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @param {number} [length] Message length if known beforehand
-     * @returns {ServerWelcomeMsg} ServerWelcomeMsg
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    ServerWelcomeMsg.decode = function decode(reader, length) {
-        if (!(reader instanceof $Reader))
-            reader = $Reader.create(reader);
-        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerWelcomeMsg();
-        while (reader.pos < end) {
-            var tag = reader.uint32();
-            switch (tag >>> 3) {
-            case 1:
-                message.clientId = reader.uint32();
-                break;
-            default:
-                reader.skipType(tag & 7);
-                break;
-            }
-        }
-        return message;
-    };
-
-    /**
-     * Decodes a ServerWelcomeMsg message from the specified reader or buffer, length delimited.
-     * @function decodeDelimited
-     * @memberof ServerWelcomeMsg
-     * @static
-     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @returns {ServerWelcomeMsg} ServerWelcomeMsg
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    ServerWelcomeMsg.decodeDelimited = function decodeDelimited(reader) {
-        if (!(reader instanceof $Reader))
-            reader = new $Reader(reader);
-        return this.decode(reader, reader.uint32());
-    };
-
-    /**
-     * Verifies a ServerWelcomeMsg message.
-     * @function verify
-     * @memberof ServerWelcomeMsg
-     * @static
-     * @param {Object.<string,*>} message Plain object to verify
-     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-     */
-    ServerWelcomeMsg.verify = function verify(message) {
-        if (typeof message !== "object" || message === null)
-            return "object expected";
-        if (message.clientId != null && message.hasOwnProperty("clientId"))
-            if (!$util.isInteger(message.clientId))
-                return "clientId: integer expected";
-        return null;
-    };
-
-    /**
-     * Creates a ServerWelcomeMsg message from a plain object. Also converts values to their respective internal types.
-     * @function fromObject
-     * @memberof ServerWelcomeMsg
-     * @static
-     * @param {Object.<string,*>} object Plain object
-     * @returns {ServerWelcomeMsg} ServerWelcomeMsg
-     */
-    ServerWelcomeMsg.fromObject = function fromObject(object) {
-        if (object instanceof $root.ServerWelcomeMsg)
-            return object;
-        var message = new $root.ServerWelcomeMsg();
-        if (object.clientId != null)
-            message.clientId = object.clientId >>> 0;
-        return message;
-    };
-
-    /**
-     * Creates a plain object from a ServerWelcomeMsg message. Also converts values to other types if specified.
-     * @function toObject
-     * @memberof ServerWelcomeMsg
-     * @static
-     * @param {ServerWelcomeMsg} message ServerWelcomeMsg
-     * @param {$protobuf.IConversionOptions} [options] Conversion options
-     * @returns {Object.<string,*>} Plain object
-     */
-    ServerWelcomeMsg.toObject = function toObject(message, options) {
-        if (!options)
-            options = {};
-        var object = {};
-        if (options.defaults)
-            object.clientId = 0;
-        if (message.clientId != null && message.hasOwnProperty("clientId"))
-            object.clientId = message.clientId;
-        return object;
-    };
-
-    /**
-     * Converts this ServerWelcomeMsg to JSON.
-     * @function toJSON
-     * @memberof ServerWelcomeMsg
-     * @instance
-     * @returns {Object.<string,*>} JSON object
-     */
-    ServerWelcomeMsg.prototype.toJSON = function toJSON() {
-        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-    };
-
-    return ServerWelcomeMsg;
-})();
-
 $root.ClientJoinSessionMsg = (function() {
 
     /**
@@ -1617,7 +2202,7 @@ $root.ClientJoinSessionMsg = (function() {
     /**
      * Constructs a new ClientJoinSessionMsg.
      * @exports ClientJoinSessionMsg
-     * @classdesc Join the session with given id
+     * @classdesc Represents a ClientJoinSessionMsg.
      * @implements IClientJoinSessionMsg
      * @constructor
      * @param {IClientJoinSessionMsg=} [properties] Properties to set
@@ -1805,7 +2390,7 @@ $root.ClientCreateSessionMsg = (function() {
     /**
      * Constructs a new ClientCreateSessionMsg.
      * @exports ClientCreateSessionMsg
-     * @classdesc Create a session with the given name and password
+     * @classdesc Represents a ClientCreateSessionMsg.
      * @implements IClientCreateSessionMsg
      * @constructor
      * @param {IClientCreateSessionMsg=} [properties] Properties to set
@@ -2000,238 +2585,6 @@ $root.ClientCreateSessionMsg = (function() {
     };
 
     return ClientCreateSessionMsg;
-})();
-
-$root.ServerSessionAcceptMsg = (function() {
-
-    /**
-     * Properties of a ServerSessionAcceptMsg.
-     * @exports IServerSessionAcceptMsg
-     * @interface IServerSessionAcceptMsg
-     * @property {number|null} [sesionId] ServerSessionAcceptMsg sesionId
-     * @property {number|null} [ownerId] ServerSessionAcceptMsg ownerId
-     * @property {string|null} [name] ServerSessionAcceptMsg name
-     */
-
-    /**
-     * Constructs a new ServerSessionAcceptMsg.
-     * @exports ServerSessionAcceptMsg
-     * @classdesc Session join or create has been accepted.
-     * @implements IServerSessionAcceptMsg
-     * @constructor
-     * @param {IServerSessionAcceptMsg=} [properties] Properties to set
-     */
-    function ServerSessionAcceptMsg(properties) {
-        if (properties)
-            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                if (properties[keys[i]] != null)
-                    this[keys[i]] = properties[keys[i]];
-    }
-
-    /**
-     * ServerSessionAcceptMsg sesionId.
-     * @member {number} sesionId
-     * @memberof ServerSessionAcceptMsg
-     * @instance
-     */
-    ServerSessionAcceptMsg.prototype.sesionId = 0;
-
-    /**
-     * ServerSessionAcceptMsg ownerId.
-     * @member {number} ownerId
-     * @memberof ServerSessionAcceptMsg
-     * @instance
-     */
-    ServerSessionAcceptMsg.prototype.ownerId = 0;
-
-    /**
-     * ServerSessionAcceptMsg name.
-     * @member {string} name
-     * @memberof ServerSessionAcceptMsg
-     * @instance
-     */
-    ServerSessionAcceptMsg.prototype.name = "";
-
-    /**
-     * Creates a new ServerSessionAcceptMsg instance using the specified properties.
-     * @function create
-     * @memberof ServerSessionAcceptMsg
-     * @static
-     * @param {IServerSessionAcceptMsg=} [properties] Properties to set
-     * @returns {ServerSessionAcceptMsg} ServerSessionAcceptMsg instance
-     */
-    ServerSessionAcceptMsg.create = function create(properties) {
-        return new ServerSessionAcceptMsg(properties);
-    };
-
-    /**
-     * Encodes the specified ServerSessionAcceptMsg message. Does not implicitly {@link ServerSessionAcceptMsg.verify|verify} messages.
-     * @function encode
-     * @memberof ServerSessionAcceptMsg
-     * @static
-     * @param {IServerSessionAcceptMsg} message ServerSessionAcceptMsg message or plain object to encode
-     * @param {$protobuf.Writer} [writer] Writer to encode to
-     * @returns {$protobuf.Writer} Writer
-     */
-    ServerSessionAcceptMsg.encode = function encode(message, writer) {
-        if (!writer)
-            writer = $Writer.create();
-        if (message.sesionId != null && Object.hasOwnProperty.call(message, "sesionId"))
-            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.sesionId);
-        if (message.ownerId != null && Object.hasOwnProperty.call(message, "ownerId"))
-            writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.ownerId);
-        if (message.name != null && Object.hasOwnProperty.call(message, "name"))
-            writer.uint32(/* id 3, wireType 2 =*/26).string(message.name);
-        return writer;
-    };
-
-    /**
-     * Encodes the specified ServerSessionAcceptMsg message, length delimited. Does not implicitly {@link ServerSessionAcceptMsg.verify|verify} messages.
-     * @function encodeDelimited
-     * @memberof ServerSessionAcceptMsg
-     * @static
-     * @param {IServerSessionAcceptMsg} message ServerSessionAcceptMsg message or plain object to encode
-     * @param {$protobuf.Writer} [writer] Writer to encode to
-     * @returns {$protobuf.Writer} Writer
-     */
-    ServerSessionAcceptMsg.encodeDelimited = function encodeDelimited(message, writer) {
-        return this.encode(message, writer).ldelim();
-    };
-
-    /**
-     * Decodes a ServerSessionAcceptMsg message from the specified reader or buffer.
-     * @function decode
-     * @memberof ServerSessionAcceptMsg
-     * @static
-     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @param {number} [length] Message length if known beforehand
-     * @returns {ServerSessionAcceptMsg} ServerSessionAcceptMsg
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    ServerSessionAcceptMsg.decode = function decode(reader, length) {
-        if (!(reader instanceof $Reader))
-            reader = $Reader.create(reader);
-        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerSessionAcceptMsg();
-        while (reader.pos < end) {
-            var tag = reader.uint32();
-            switch (tag >>> 3) {
-            case 1:
-                message.sesionId = reader.uint32();
-                break;
-            case 2:
-                message.ownerId = reader.uint32();
-                break;
-            case 3:
-                message.name = reader.string();
-                break;
-            default:
-                reader.skipType(tag & 7);
-                break;
-            }
-        }
-        return message;
-    };
-
-    /**
-     * Decodes a ServerSessionAcceptMsg message from the specified reader or buffer, length delimited.
-     * @function decodeDelimited
-     * @memberof ServerSessionAcceptMsg
-     * @static
-     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @returns {ServerSessionAcceptMsg} ServerSessionAcceptMsg
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    ServerSessionAcceptMsg.decodeDelimited = function decodeDelimited(reader) {
-        if (!(reader instanceof $Reader))
-            reader = new $Reader(reader);
-        return this.decode(reader, reader.uint32());
-    };
-
-    /**
-     * Verifies a ServerSessionAcceptMsg message.
-     * @function verify
-     * @memberof ServerSessionAcceptMsg
-     * @static
-     * @param {Object.<string,*>} message Plain object to verify
-     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-     */
-    ServerSessionAcceptMsg.verify = function verify(message) {
-        if (typeof message !== "object" || message === null)
-            return "object expected";
-        if (message.sesionId != null && message.hasOwnProperty("sesionId"))
-            if (!$util.isInteger(message.sesionId))
-                return "sesionId: integer expected";
-        if (message.ownerId != null && message.hasOwnProperty("ownerId"))
-            if (!$util.isInteger(message.ownerId))
-                return "ownerId: integer expected";
-        if (message.name != null && message.hasOwnProperty("name"))
-            if (!$util.isString(message.name))
-                return "name: string expected";
-        return null;
-    };
-
-    /**
-     * Creates a ServerSessionAcceptMsg message from a plain object. Also converts values to their respective internal types.
-     * @function fromObject
-     * @memberof ServerSessionAcceptMsg
-     * @static
-     * @param {Object.<string,*>} object Plain object
-     * @returns {ServerSessionAcceptMsg} ServerSessionAcceptMsg
-     */
-    ServerSessionAcceptMsg.fromObject = function fromObject(object) {
-        if (object instanceof $root.ServerSessionAcceptMsg)
-            return object;
-        var message = new $root.ServerSessionAcceptMsg();
-        if (object.sesionId != null)
-            message.sesionId = object.sesionId >>> 0;
-        if (object.ownerId != null)
-            message.ownerId = object.ownerId >>> 0;
-        if (object.name != null)
-            message.name = String(object.name);
-        return message;
-    };
-
-    /**
-     * Creates a plain object from a ServerSessionAcceptMsg message. Also converts values to other types if specified.
-     * @function toObject
-     * @memberof ServerSessionAcceptMsg
-     * @static
-     * @param {ServerSessionAcceptMsg} message ServerSessionAcceptMsg
-     * @param {$protobuf.IConversionOptions} [options] Conversion options
-     * @returns {Object.<string,*>} Plain object
-     */
-    ServerSessionAcceptMsg.toObject = function toObject(message, options) {
-        if (!options)
-            options = {};
-        var object = {};
-        if (options.defaults) {
-            object.sesionId = 0;
-            object.ownerId = 0;
-            object.name = "";
-        }
-        if (message.sesionId != null && message.hasOwnProperty("sesionId"))
-            object.sesionId = message.sesionId;
-        if (message.ownerId != null && message.hasOwnProperty("ownerId"))
-            object.ownerId = message.ownerId;
-        if (message.name != null && message.hasOwnProperty("name"))
-            object.name = message.name;
-        return object;
-    };
-
-    /**
-     * Converts this ServerSessionAcceptMsg to JSON.
-     * @function toJSON
-     * @memberof ServerSessionAcceptMsg
-     * @instance
-     * @returns {Object.<string,*>} JSON object
-     */
-    ServerSessionAcceptMsg.prototype.toJSON = function toJSON() {
-        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-    };
-
-    return ServerSessionAcceptMsg;
 })();
 
 $root.ClientAppMsg = (function() {
@@ -2473,225 +2826,6 @@ $root.ClientAppMsg = (function() {
     };
 
     return ClientAppMsg;
-})();
-
-$root.ServerAppMsg = (function() {
-
-    /**
-     * Properties of a ServerAppMsg.
-     * @exports IServerAppMsg
-     * @interface IServerAppMsg
-     * @property {number|null} [from] ServerAppMsg from
-     * @property {Uint8Array|null} [data] ServerAppMsg data
-     */
-
-    /**
-     * Constructs a new ServerAppMsg.
-     * @exports ServerAppMsg
-     * @classdesc Represents a ServerAppMsg.
-     * @implements IServerAppMsg
-     * @constructor
-     * @param {IServerAppMsg=} [properties] Properties to set
-     */
-    function ServerAppMsg(properties) {
-        if (properties)
-            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                if (properties[keys[i]] != null)
-                    this[keys[i]] = properties[keys[i]];
-    }
-
-    /**
-     * ServerAppMsg from.
-     * @member {number} from
-     * @memberof ServerAppMsg
-     * @instance
-     */
-    ServerAppMsg.prototype.from = 0;
-
-    /**
-     * ServerAppMsg data.
-     * @member {Uint8Array} data
-     * @memberof ServerAppMsg
-     * @instance
-     */
-    ServerAppMsg.prototype.data = $util.newBuffer([]);
-
-    /**
-     * Creates a new ServerAppMsg instance using the specified properties.
-     * @function create
-     * @memberof ServerAppMsg
-     * @static
-     * @param {IServerAppMsg=} [properties] Properties to set
-     * @returns {ServerAppMsg} ServerAppMsg instance
-     */
-    ServerAppMsg.create = function create(properties) {
-        return new ServerAppMsg(properties);
-    };
-
-    /**
-     * Encodes the specified ServerAppMsg message. Does not implicitly {@link ServerAppMsg.verify|verify} messages.
-     * @function encode
-     * @memberof ServerAppMsg
-     * @static
-     * @param {IServerAppMsg} message ServerAppMsg message or plain object to encode
-     * @param {$protobuf.Writer} [writer] Writer to encode to
-     * @returns {$protobuf.Writer} Writer
-     */
-    ServerAppMsg.encode = function encode(message, writer) {
-        if (!writer)
-            writer = $Writer.create();
-        if (message.from != null && Object.hasOwnProperty.call(message, "from"))
-            writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.from);
-        if (message.data != null && Object.hasOwnProperty.call(message, "data"))
-            writer.uint32(/* id 2, wireType 2 =*/18).bytes(message.data);
-        return writer;
-    };
-
-    /**
-     * Encodes the specified ServerAppMsg message, length delimited. Does not implicitly {@link ServerAppMsg.verify|verify} messages.
-     * @function encodeDelimited
-     * @memberof ServerAppMsg
-     * @static
-     * @param {IServerAppMsg} message ServerAppMsg message or plain object to encode
-     * @param {$protobuf.Writer} [writer] Writer to encode to
-     * @returns {$protobuf.Writer} Writer
-     */
-    ServerAppMsg.encodeDelimited = function encodeDelimited(message, writer) {
-        return this.encode(message, writer).ldelim();
-    };
-
-    /**
-     * Decodes a ServerAppMsg message from the specified reader or buffer.
-     * @function decode
-     * @memberof ServerAppMsg
-     * @static
-     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @param {number} [length] Message length if known beforehand
-     * @returns {ServerAppMsg} ServerAppMsg
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    ServerAppMsg.decode = function decode(reader, length) {
-        if (!(reader instanceof $Reader))
-            reader = $Reader.create(reader);
-        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerAppMsg();
-        while (reader.pos < end) {
-            var tag = reader.uint32();
-            switch (tag >>> 3) {
-            case 1:
-                message.from = reader.uint32();
-                break;
-            case 2:
-                message.data = reader.bytes();
-                break;
-            default:
-                reader.skipType(tag & 7);
-                break;
-            }
-        }
-        return message;
-    };
-
-    /**
-     * Decodes a ServerAppMsg message from the specified reader or buffer, length delimited.
-     * @function decodeDelimited
-     * @memberof ServerAppMsg
-     * @static
-     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @returns {ServerAppMsg} ServerAppMsg
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    ServerAppMsg.decodeDelimited = function decodeDelimited(reader) {
-        if (!(reader instanceof $Reader))
-            reader = new $Reader(reader);
-        return this.decode(reader, reader.uint32());
-    };
-
-    /**
-     * Verifies a ServerAppMsg message.
-     * @function verify
-     * @memberof ServerAppMsg
-     * @static
-     * @param {Object.<string,*>} message Plain object to verify
-     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-     */
-    ServerAppMsg.verify = function verify(message) {
-        if (typeof message !== "object" || message === null)
-            return "object expected";
-        if (message.from != null && message.hasOwnProperty("from"))
-            if (!$util.isInteger(message.from))
-                return "from: integer expected";
-        if (message.data != null && message.hasOwnProperty("data"))
-            if (!(message.data && typeof message.data.length === "number" || $util.isString(message.data)))
-                return "data: buffer expected";
-        return null;
-    };
-
-    /**
-     * Creates a ServerAppMsg message from a plain object. Also converts values to their respective internal types.
-     * @function fromObject
-     * @memberof ServerAppMsg
-     * @static
-     * @param {Object.<string,*>} object Plain object
-     * @returns {ServerAppMsg} ServerAppMsg
-     */
-    ServerAppMsg.fromObject = function fromObject(object) {
-        if (object instanceof $root.ServerAppMsg)
-            return object;
-        var message = new $root.ServerAppMsg();
-        if (object.from != null)
-            message.from = object.from >>> 0;
-        if (object.data != null)
-            if (typeof object.data === "string")
-                $util.base64.decode(object.data, message.data = $util.newBuffer($util.base64.length(object.data)), 0);
-            else if (object.data.length)
-                message.data = object.data;
-        return message;
-    };
-
-    /**
-     * Creates a plain object from a ServerAppMsg message. Also converts values to other types if specified.
-     * @function toObject
-     * @memberof ServerAppMsg
-     * @static
-     * @param {ServerAppMsg} message ServerAppMsg
-     * @param {$protobuf.IConversionOptions} [options] Conversion options
-     * @returns {Object.<string,*>} Plain object
-     */
-    ServerAppMsg.toObject = function toObject(message, options) {
-        if (!options)
-            options = {};
-        var object = {};
-        if (options.defaults) {
-            object.from = 0;
-            if (options.bytes === String)
-                object.data = "";
-            else {
-                object.data = [];
-                if (options.bytes !== Array)
-                    object.data = $util.newBuffer(object.data);
-            }
-        }
-        if (message.from != null && message.hasOwnProperty("from"))
-            object.from = message.from;
-        if (message.data != null && message.hasOwnProperty("data"))
-            object.data = options.bytes === String ? $util.base64.encode(message.data, 0, message.data.length) : options.bytes === Array ? Array.prototype.slice.call(message.data) : message.data;
-        return object;
-    };
-
-    /**
-     * Converts this ServerAppMsg to JSON.
-     * @function toJSON
-     * @memberof ServerAppMsg
-     * @instance
-     * @returns {Object.<string,*>} JSON object
-     */
-    ServerAppMsg.prototype.toJSON = function toJSON() {
-        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-    };
-
-    return ServerAppMsg;
 })();
 
 $root.Session = (function() {
@@ -2993,214 +3127,6 @@ $root.Session = (function() {
     };
 
     return Session;
-})();
-
-$root.ServerSessionsMsg = (function() {
-
-    /**
-     * Properties of a ServerSessionsMsg.
-     * @exports IServerSessionsMsg
-     * @interface IServerSessionsMsg
-     * @property {Array.<ISession>|null} [sessions] ServerSessionsMsg sessions
-     */
-
-    /**
-     * Constructs a new ServerSessionsMsg.
-     * @exports ServerSessionsMsg
-     * @classdesc Represents a ServerSessionsMsg.
-     * @implements IServerSessionsMsg
-     * @constructor
-     * @param {IServerSessionsMsg=} [properties] Properties to set
-     */
-    function ServerSessionsMsg(properties) {
-        this.sessions = [];
-        if (properties)
-            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                if (properties[keys[i]] != null)
-                    this[keys[i]] = properties[keys[i]];
-    }
-
-    /**
-     * ServerSessionsMsg sessions.
-     * @member {Array.<ISession>} sessions
-     * @memberof ServerSessionsMsg
-     * @instance
-     */
-    ServerSessionsMsg.prototype.sessions = $util.emptyArray;
-
-    /**
-     * Creates a new ServerSessionsMsg instance using the specified properties.
-     * @function create
-     * @memberof ServerSessionsMsg
-     * @static
-     * @param {IServerSessionsMsg=} [properties] Properties to set
-     * @returns {ServerSessionsMsg} ServerSessionsMsg instance
-     */
-    ServerSessionsMsg.create = function create(properties) {
-        return new ServerSessionsMsg(properties);
-    };
-
-    /**
-     * Encodes the specified ServerSessionsMsg message. Does not implicitly {@link ServerSessionsMsg.verify|verify} messages.
-     * @function encode
-     * @memberof ServerSessionsMsg
-     * @static
-     * @param {IServerSessionsMsg} message ServerSessionsMsg message or plain object to encode
-     * @param {$protobuf.Writer} [writer] Writer to encode to
-     * @returns {$protobuf.Writer} Writer
-     */
-    ServerSessionsMsg.encode = function encode(message, writer) {
-        if (!writer)
-            writer = $Writer.create();
-        if (message.sessions != null && message.sessions.length)
-            for (var i = 0; i < message.sessions.length; ++i)
-                $root.Session.encode(message.sessions[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
-        return writer;
-    };
-
-    /**
-     * Encodes the specified ServerSessionsMsg message, length delimited. Does not implicitly {@link ServerSessionsMsg.verify|verify} messages.
-     * @function encodeDelimited
-     * @memberof ServerSessionsMsg
-     * @static
-     * @param {IServerSessionsMsg} message ServerSessionsMsg message or plain object to encode
-     * @param {$protobuf.Writer} [writer] Writer to encode to
-     * @returns {$protobuf.Writer} Writer
-     */
-    ServerSessionsMsg.encodeDelimited = function encodeDelimited(message, writer) {
-        return this.encode(message, writer).ldelim();
-    };
-
-    /**
-     * Decodes a ServerSessionsMsg message from the specified reader or buffer.
-     * @function decode
-     * @memberof ServerSessionsMsg
-     * @static
-     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @param {number} [length] Message length if known beforehand
-     * @returns {ServerSessionsMsg} ServerSessionsMsg
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    ServerSessionsMsg.decode = function decode(reader, length) {
-        if (!(reader instanceof $Reader))
-            reader = $Reader.create(reader);
-        var end = length === undefined ? reader.len : reader.pos + length, message = new $root.ServerSessionsMsg();
-        while (reader.pos < end) {
-            var tag = reader.uint32();
-            switch (tag >>> 3) {
-            case 2:
-                if (!(message.sessions && message.sessions.length))
-                    message.sessions = [];
-                message.sessions.push($root.Session.decode(reader, reader.uint32()));
-                break;
-            default:
-                reader.skipType(tag & 7);
-                break;
-            }
-        }
-        return message;
-    };
-
-    /**
-     * Decodes a ServerSessionsMsg message from the specified reader or buffer, length delimited.
-     * @function decodeDelimited
-     * @memberof ServerSessionsMsg
-     * @static
-     * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-     * @returns {ServerSessionsMsg} ServerSessionsMsg
-     * @throws {Error} If the payload is not a reader or valid buffer
-     * @throws {$protobuf.util.ProtocolError} If required fields are missing
-     */
-    ServerSessionsMsg.decodeDelimited = function decodeDelimited(reader) {
-        if (!(reader instanceof $Reader))
-            reader = new $Reader(reader);
-        return this.decode(reader, reader.uint32());
-    };
-
-    /**
-     * Verifies a ServerSessionsMsg message.
-     * @function verify
-     * @memberof ServerSessionsMsg
-     * @static
-     * @param {Object.<string,*>} message Plain object to verify
-     * @returns {string|null} `null` if valid, otherwise the reason why it is not
-     */
-    ServerSessionsMsg.verify = function verify(message) {
-        if (typeof message !== "object" || message === null)
-            return "object expected";
-        if (message.sessions != null && message.hasOwnProperty("sessions")) {
-            if (!Array.isArray(message.sessions))
-                return "sessions: array expected";
-            for (var i = 0; i < message.sessions.length; ++i) {
-                var error = $root.Session.verify(message.sessions[i]);
-                if (error)
-                    return "sessions." + error;
-            }
-        }
-        return null;
-    };
-
-    /**
-     * Creates a ServerSessionsMsg message from a plain object. Also converts values to their respective internal types.
-     * @function fromObject
-     * @memberof ServerSessionsMsg
-     * @static
-     * @param {Object.<string,*>} object Plain object
-     * @returns {ServerSessionsMsg} ServerSessionsMsg
-     */
-    ServerSessionsMsg.fromObject = function fromObject(object) {
-        if (object instanceof $root.ServerSessionsMsg)
-            return object;
-        var message = new $root.ServerSessionsMsg();
-        if (object.sessions) {
-            if (!Array.isArray(object.sessions))
-                throw TypeError(".ServerSessionsMsg.sessions: array expected");
-            message.sessions = [];
-            for (var i = 0; i < object.sessions.length; ++i) {
-                if (typeof object.sessions[i] !== "object")
-                    throw TypeError(".ServerSessionsMsg.sessions: object expected");
-                message.sessions[i] = $root.Session.fromObject(object.sessions[i]);
-            }
-        }
-        return message;
-    };
-
-    /**
-     * Creates a plain object from a ServerSessionsMsg message. Also converts values to other types if specified.
-     * @function toObject
-     * @memberof ServerSessionsMsg
-     * @static
-     * @param {ServerSessionsMsg} message ServerSessionsMsg
-     * @param {$protobuf.IConversionOptions} [options] Conversion options
-     * @returns {Object.<string,*>} Plain object
-     */
-    ServerSessionsMsg.toObject = function toObject(message, options) {
-        if (!options)
-            options = {};
-        var object = {};
-        if (options.arrays || options.defaults)
-            object.sessions = [];
-        if (message.sessions && message.sessions.length) {
-            object.sessions = [];
-            for (var j = 0; j < message.sessions.length; ++j)
-                object.sessions[j] = $root.Session.toObject(message.sessions[j], options);
-        }
-        return object;
-    };
-
-    /**
-     * Converts this ServerSessionsMsg to JSON.
-     * @function toJSON
-     * @memberof ServerSessionsMsg
-     * @instance
-     * @returns {Object.<string,*>} JSON object
-     */
-    ServerSessionsMsg.prototype.toJSON = function toJSON() {
-        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-    };
-
-    return ServerSessionsMsg;
 })();
 
 $root.google = (function() {

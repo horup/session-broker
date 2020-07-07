@@ -17,8 +17,6 @@ interface AppMsg
 const Index = ()=>{
     const [connected, setConnected] = React.useState(false);
     const [clientId, setClientId] = React.useState(0);
-    const [sessionName, setSessionName] = React.useState(null as string);
-    const [sessionId, setSessionId] = React.useState<number>(0);
     const [sessions, setSessions] = React.useState([] as ISession[]);
     const [session, setSession] = React.useState(null as Session);
     const [textBuffer, setTextBuffer] = React.useState("");
@@ -40,8 +38,6 @@ const Index = ()=>{
             setSessions(sessions);
         }
         client.onSessionChange = (session)=>{
-            setSessionId(session.id);
-            setSessionName(session.name);
             setSession(session);
         };
 
@@ -67,12 +63,12 @@ const Index = ()=>{
         <div>
             {connected ? 'Connected' : 'Disconnected'} as {clientId != null ? clientId : "---"}
             <br/>
-            {sessionId && connected ? `Part of session ${sessionId} with name:'${sessionName}'` : ""}
+            {session && connected ? `Part of session ${session.id} with name:'${session.name}'` : ""}
             <br/>
-            {client.session != null && connected ? `Chatters: ${client.session.clients}` : ""}
+            {session && connected ? `Chatters: ${session.clients}` : ""}
         </div>
         {
-            sessionId == 0 ? 
+            !session ? 
             <div>
                 <button onClick={()=>createSessionClick()}>Create Session</button>
                 <table>
@@ -110,115 +106,3 @@ const Index = ()=>{
 }
 
 ReactDom.render(<Index/>, document.getElementById('main'));
-
-/*
-const ws = new WebSocket('ws://localhost:8080');
-ws.binaryType = "arraybuffer";
-ws.onopen = ()=>{
-    info("connected");
-    const msg = new ClientMsg({
-        connect:{
-
-        }
-    })
-
-    const data = ClientMsg.encode(msg).finish();
-    ws.send(data);
-}
-
-const Index = ()=>{
-    const [sessionId, setSessionId] = React.useState<number>();
-    const [clientId, setClientId] = React.useState(0);
-    const [sessions, setSessions] = React.useState([] as ISession[])
-    const createSessionClick = ()=>{
-        const name = prompt("Session Name", "New Session");
-        const msg = new ClientMsg({
-            createSession:{
-                name:name
-            }
-        })
-
-        ws.send(ClientMsg.encode(msg).finish());
-    }
-    const joinSessionClick = (forcedId?:number)=>{
-        const id = forcedId == null ? prompt("Session ID", "") : forcedId.toString();
-        const msg = new ClientMsg({
-            joinSession:{
-                sessionId:Number.parseInt(id)
-            }
-        })
-
-        ws.send(ClientMsg.encode(msg).finish());
-    }
-
-    const refreshClick = ()=>{
-        const msg = new ClientMsg({
-            refreshSessions:{}
-        })
-
-        ws.send(ClientMsg.encode(msg).finish());
-    }
-
-    React.useEffect(()=>{
-        ws.onmessage = async (msg)=>{
-            const buffer = msg.data as ArrayBuffer;
-            const serverMsg = ServerMsg.decode(new Uint8Array(buffer));
-
-            if (serverMsg.welcomeMsg)
-            {
-                setClientId(serverMsg.welcomeMsg.clientId as number);
-            }
-            else if (serverMsg.sessionAccept)
-            {
-                setSessionId(serverMsg.sessionAccept.sesionId as number);
-            }
-            else if (serverMsg.sessions)
-            {
-                setSessions(serverMsg.sessions.sessions);
-            }
-        }
-    }, []);
-
-
-    return <div>
-        <div>Client ID: {clientId}</div>
-        <div>Session ID: {sessionId}</div>
-        <button onClick={()=>createSessionClick()}>Create Session</button>
-        <button onClick={()=>joinSessionClick()}>Join Session</button>
-        <button onClick={()=>refreshClick()}>Refresh</button>
-        <br/>
-        <br/>
-        <b>Sessions: {sessions.length}</b>
-        <table>
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Password</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {sessions.map((s,i)=>{
-                    return  <tr key={i}>
-                                <td>
-                                    {s.id}
-                                </td>
-                                <td>
-                                    {s.name}
-                                </td>
-                                <td>
-                                    {s.passwordProtected == true ? "X" : ""}
-                                </td>
-                                <td>
-                                <button onClick={()=>joinSessionClick(s.id)}>Join</button>
-                                </td>
-                            </tr>
-                })}
-            </tbody>
-        </table>
-    </div>
-}
-
-ReactDom.render(<Index/>, document.getElementById('main'));
-*/

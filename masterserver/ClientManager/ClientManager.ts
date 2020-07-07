@@ -27,7 +27,7 @@ redis.subscribeConnect((clientId)=>{
     {
         redis.setClient(clientId, {id:clientId});
         const serverMsg = new ServerMsg({
-            welcomeMsg:{
+            welcome:{
                 clientId:clientId
             }
         });
@@ -43,7 +43,7 @@ redis.subscribeSessionChange((msg)=>{
         const ws = localClientSockets.get(cid);
         if (ws)
         {
-            ws.send(ServerMsg.encode({session:msg.session}).finish());
+            ws.send(ServerMsg.encode({currentSessionChanged:{session:msg.session}}).finish());
         }
     })
 });
@@ -61,33 +61,31 @@ redis.subscribeDisconnect((clientId)=>{
 })
 
 
-redis.subscribeSessionSwitch((sessionAccept)=>{
-    info(`session accepted with ${JSON.stringify(sessionAccept)}`);
+redis.subscribeSessionSwitch((sessionSwitch)=>{
+    info(`session accepted with ${JSON.stringify(sessionSwitch)}`);
 
-    const clientId = sessionAccept.clientId;
+    const clientId = sessionSwitch.clientId;
     const ws = localClientSockets.get(clientId);
     if (ws != null)
     {
         {
             const serverMsg = new ServerMsg({
-                sessionAccept:{
-                    name:sessionAccept.name,
-                    ownerId:sessionAccept.owner,
-                    sesionId:sessionAccept.sessionId
+                currentSessionChanged:{
+                    session:sessionSwitch
                 }
             })
 
-            redis.setClient(clientId, {id:clientId, session:sessionAccept.sessionId});
+            redis.setClient(clientId, {id:clientId, session:sessionSwitch.sessionId});
             ws.send(ServerMsg.encode(serverMsg).finish());
         }
 
-        const sessionid = sessionAccept.sessionId;
+        const sessionid = sessionSwitch.sessionId;
 
         // Local Client has joined a session, subscribe to it if not done already
         if (!subscribedToSession.has(sessionid))
         {
-            info(`subscribed to local session with id ${sessionAccept.sessionId}`);
-            redis.subscribeApp(sessionAccept.sessionId);
+            info(`subscribed to local session with id ${sessionSwitch.sessionId}`);
+            redis.subscribeApp(sessionSwitch.sessionId);
             subscribedToSession.set(sessionid, 1);
         }
         else
@@ -106,7 +104,7 @@ redis.setAppReplyHandler(async (app)=>{
             const ws = localClientSockets.get(c.id);
             if (ws)
             {
-                ws.send(ServerMsg.encode({appMsg:{
+                ws.send(ServerMsg.encode({app:{
                     data:app.data,
                     from:app.fromClientId
                 }}).finish())
@@ -127,7 +125,7 @@ async function sendSessions(ws:WebSocket)
 {
     const sessions = await redis.getSessions();
     const msg = new ServerMsg({
-        sessions:{
+        avaliableSessionsChanged:{
             sessions:sessions.map((s,i)=>{
                 return {id:s.id, name:s.name, owner:s.owner, passwordProtected: s.password.length != 0}
             })
