@@ -28,7 +28,7 @@ const Index = ()=>{
                 id:clientId,
                 text:textBuffer
             }
-        }, undefined, true);
+        }, undefined, false);
         setTextBuffer("");
     }
 
