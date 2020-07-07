@@ -48,6 +48,11 @@ const Index = ()=>{
             chatRef.current = c; //hack to avoid stale closure
             setChat(c);
         }
+
+        client.onMessage = (msg)=>{
+            console.log(`${JSON.stringify(msg)}`);
+        }
+        
         client.connect(`ws://localhost:8080`);
     }, [])
 
