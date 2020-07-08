@@ -16,13 +16,7 @@ export class MasterClient
     private _clientId:number;
     private _connected = false;
     private _avaliableSessions = [] as ISession[]; 
-    private _clients = [] as Client[];
     private _currentSession = null as Session;
-
-    get clients()
-    {
-        return this._clients;
-    }
 
     get currentSession()
     {
@@ -64,17 +58,32 @@ export class MasterClient
             {
                 this._clientId = serverMsg.welcome.clientId;
                 this._connected = true;
-                this.onConnectionChange(this.isConnected, this.clientId)
+                this.onConnectionChanged(this.isConnected, this.clientId)
             }
             else if (serverMsg.currentSessionChanged)
             {
+                const prev = this.currentSession != null ? this.currentSession.clients : [];
                 this._currentSession = serverMsg.currentSessionChanged.session;
-                this.onSessionChange(this.currentSession)
+                this.onSessionChanged(this.currentSession);
+                const current = this.currentSession != null ? this.currentSession.clients : [];
+                current.forEach(c=>{
+                    if (!prev.find(v=>v==c))
+                    {
+                        this.onClientConnected(c);
+
+                    }
+                })
+                prev.forEach(c=>{
+                    if (!current.find(v=>v==c))
+                    {
+                        this.onClientDisconnected(c);
+                    }
+                })
             }
             else if (serverMsg.avaliableSessionsChanged)
             {
                 this._avaliableSessions = serverMsg.avaliableSessionsChanged.sessions;
-                this.onSessionsChange(this.avaliableSessions);
+                this.onSessionsChanged(this.avaliableSessions);
             }
             else if (serverMsg.app)
             {
@@ -90,8 +99,8 @@ export class MasterClient
         this.ws.onclose = ()=>{
             this._connected = false;
             this._currentSession = null;
-            this.onSessionChange(this._currentSession);
-            this.onConnectionChange(this.isConnected, this.clientId);
+            this.onSessionChanged(this._currentSession);
+            this.onConnectionChanged(this.isConnected, this.clientId);
             setTimeout(()=>{
                 this.connect(url);
             }, 5000)
@@ -105,10 +114,11 @@ export class MasterClient
 
     
     onAppMessageFromJson = <AppMsg>(fromId:number, app:AppMsg)=>{}
-    onConnectionChange = (connected:boolean, clientId:number)=>{}
-    onSessionChange = (sesssion?:(Session))=>{};
-    onSessionsChange = (sessions:Session[])=>{};
-    onClientsChange = (clients:Client[])=>{};
+    onConnectionChanged = (connected:boolean, clientId:number)=>{}
+    onSessionChanged = (sesssion?:(Session))=>{};
+    onSessionsChanged = (sessions:Session[])=>{};
+    onClientConnected = (clientId:number)=>{};
+    onClientDisconnected = (clientId:number)=>{};
 
     private sendConnect():boolean
     {

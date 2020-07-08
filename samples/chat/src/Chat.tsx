@@ -38,31 +38,35 @@ const Index = ()=>{
         setTextBuffer("");
     }
 
+    const writeLine = (s:string)=>{
+        const c = chatRef.current + s + `\n`;
+        chatRef.current = c; //hack to avoid stale closure
+        setChat(c);
+    }
+
     React.useEffect(()=>{
-        client.onConnectionChange = (c, id)=>{setConnected(c), setClientId(id)};
-        client.onSessionsChange = (sessions)=>{
+        client.onConnectionChanged = (c, id)=>{setConnected(c), setClientId(id)};
+        client.onSessionsChanged = (sessions)=>{
             setSessions(sessions);
         }
-        client.onSessionChange = (session)=>{
+        client.onSessionChanged = (session)=>{
             setSession(session);
         };
 
+        client.onClientConnected = (c)=>writeLine(`${c} joined the chat`);
+        client.onClientDisconnected = (c)=>writeLine(`${c} left the chat`);
 
         client.onAppMessageFromJson = (fromId, msg:AppMsg)=>
         {
             if (msg.chat)
             {
-                const c = chatRef.current + `${msg.chat.id}:${msg.chat.text}\n`;
-                chatRef.current = c; //hack to avoid stale closure
-                setChat(c);
+                writeLine(`${msg.chat.id}:${msg.chat.text}`);
             }
             else if (msg.pong)
             {
                 const nowMs = (new Date()).getTime();
                 const diff = nowMs - msg.pong.dt;
-                const c = chatRef.current + `Latency:${diff}ms\n`;
-                chatRef.current = c; //hack to avoid stale closure
-                setChat(c);
+                writeLine(`Latency:${diff}ms`);
             }
 
             if (client.isSessionOwner)
