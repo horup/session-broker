@@ -9,7 +9,7 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "typescript": "^3.9.5",
     "shared": "file:../shared"
   }
