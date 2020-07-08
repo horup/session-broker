@@ -18,8 +18,7 @@ const validate = ()=>{
     }
     if (config.PORT == undefined || Number.isNaN(config.PORT))
     {
-        error("PORT not defined or NaN");
-        return false;
+        config.PORT = 80; 
     }
 
     return true;

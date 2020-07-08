@@ -9,5 +9,5 @@ RUN npm install --unsafe-perm
 COPY ./masterserver/ ./
 RUN npm run build --unsafe-perm
 
-EXPOSE 8080
+EXPOSE 80
 CMD ["npm", "start"]
