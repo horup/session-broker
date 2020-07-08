@@ -1,7 +1,7 @@
 import * as WebSocket from 'ws';
 import config from '../config';
 import {info as _info} from '../log';
-import {ClientMsg, ServerMsg} from '../../shared';
+import {ClientMsg, ServerMsg} from 'shared';
 import { Reader } from 'protobufjs';
 import * as redis from '../redis';
 import { Client } from '../redis';

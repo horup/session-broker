@@ -1,0 +1,7 @@
+{
+    "compilerOptions": {
+        "outDir": "lib",
+        "target": "ES5",
+        "lib": ["DOM", "ES2015.Promise", "ES2015"]
+    }
+}

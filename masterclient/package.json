@@ -2,13 +2,15 @@
   "name": "masterclient",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "tsc --declaration"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.5",
+    "shared": "file:../shared"
   }
 }

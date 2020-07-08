@@ -1,7 +1,5 @@
-import {ClientMsg, ServerMsg, ISession} from '../shared';
-import { ENGINE_METHOD_DIGESTS } from 'constants';
-import { SessionState } from 'http2';
-export * from '../shared';
+import {ClientMsg, ServerMsg, ISession} from 'shared';
+export * from 'shared';
 export interface Client
 {
     id:number;
