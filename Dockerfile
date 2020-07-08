@@ -1,6 +1,7 @@
 FROM node:12
 WORKDIR /usr/src/shared
 COPY ./shared/ ./
+RUN npm install --unsafe-perm
 
 WORKDIR /usr/src/masterserver
 COPY ./masterserver/package*.json ./
