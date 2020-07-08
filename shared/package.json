@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "proto": "pbjs --force-number -t static-module -w commonjs -o proto/index.js ./proto/msg.proto && pbts -o proto/index.d.ts proto/index.js"
+    "postinstall": "pbjs --force-number -t static-module -w commonjs -o index.js ./msg.proto && pbts -o index.d.ts index.js"
   },
   "author": "",
   "license": "ISC",
