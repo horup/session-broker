@@ -29,11 +29,11 @@
     "dotenv": "^8.2.0",
     "ioredis": "^4.17.3",
     "protobufjs": "^6.9.0",
+    "shared": "file:../shared",
     "ts-node": "^8.10.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.9.5",
     "uuid": "^8.1.0",
-    "ws": "^7.3.0",
-    "shared": "file:../shared"
+    "ws": "^7.3.0"
   }
 }
