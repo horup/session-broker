@@ -1,7 +1,7 @@
 {
-  "name": "masterserver",
+  "name": "broker-node",
   "version": "1.0.0",
-  "description": "A nodejs implementation of a masterserver",
+  "description": "A nodejs implementation of a session broker",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

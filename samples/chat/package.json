@@ -15,12 +15,11 @@
     "@types/react": "^16.9.36",
     "@types/react-dom": "^16.9.8",
     "debug": "^4.1.1",
-    "masterserver": "../masterserver",
     "parcel-bundler": "^1.12.4",
     "protobufjs": "^6.9.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "masterclient": "file://../../masterclient",
+    "masterclient": "file://../../broker-client-lib",
     "shared": "file://../../shared"
   },
   "devDependencies": {
