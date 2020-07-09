@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {info} from './log';
-import {Session, ISession, MasterClient} from 'masterclient';
+import {Session, ISession, MasterClient} from 'broker-client-lib';
 import {Reader} from 'protobufjs';
 
 const client = new MasterClient();

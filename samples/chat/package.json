@@ -19,7 +19,7 @@
     "protobufjs": "^6.9.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "masterclient": "file://../../broker-client-lib",
+    "broker-client-lib": "file://../../broker-client-lib",
     "shared": "file://../../shared"
   },
   "devDependencies": {
