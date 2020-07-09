@@ -1,2 +1,3 @@
-# masterserver
-A nodejs implementation of a masterserver
+# Session Broker
+A nodejs implementation of a session broker.
+
