@@ -8,7 +8,7 @@ export interface Session extends ISession
 {
 
 }
-export class MasterClient
+export class BrokerClient
 {
     private ws:WebSocket;
     private _clientId:number;
