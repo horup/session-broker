@@ -10,11 +10,18 @@ export interface Session extends ISession
 }
 export class BrokerClient
 {
+    private pinger:number;
     private ws:WebSocket;
     private _clientId:number;
     private _connected = false;
     private _avaliableSessions = [] as ISession[]; 
     private _currentSession = null as Session;
+    private _latencyAvg = 0;
+
+    get latencyAvg()
+    {
+        return this._latencyAvg;
+    }
 
     get currentSession()
     {
@@ -56,7 +63,15 @@ export class BrokerClient
             {
                 this._clientId = serverMsg.welcome.clientId;
                 this._connected = true;
-                this.onConnectionChanged(this.isConnected, this.clientId)
+                this.onConnectionChanged(this.isConnected, this.clientId);
+
+                this.pinger = setInterval(()=>{
+                    this.send(new ClientMsg({
+                        ping:{
+                            time:performance.now()
+                        }
+                    }))    
+                },1000);
             }
             else if (serverMsg.currentSessionChanged)
             {
@@ -78,6 +93,11 @@ export class BrokerClient
                     }
                 })
             }
+            else if (serverMsg.pong)
+            {
+                const diff = performance.now() - serverMsg.pong.time;
+                this._latencyAvg = diff;
+            }
             else if (serverMsg.avaliableSessionsChanged)
             {
                 this._avaliableSessions = serverMsg.avaliableSessionsChanged.sessions;
@@ -95,6 +115,7 @@ export class BrokerClient
         }
 
         this.ws.onclose = ()=>{
+            clearInterval(this.pinger);
             this._connected = false;
             this._currentSession = null;
             this.onSessionChanged(this._currentSession);

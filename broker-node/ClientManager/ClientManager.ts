@@ -179,6 +179,14 @@ wss.on('connection', (ws)=>{
                 redis.publishJoin({sessionId:sessionId as number, clientId:clientId})
             }
         }
+        else if (msg.ping)
+        {
+            ws.send(ServerMsg.encode({
+                pong:{
+                    time:msg.ping.time
+                }
+            }).finish());
+        }
         else if (msg.appMsg)
         {
     info(`appMsg:start`);
