@@ -1,0 +1,21 @@
+{
+  "name": "broker-react-lobby",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "tsc --declaration",
+    "start": "tsc --declaration --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/react": "^16.9.43",
+    "@types/react-dom": "^16.9.8",
+    "broker-client-lib": "file:../broker-client-lib",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "typescript": "^3.9.6"
+  }
+}
