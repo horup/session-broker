@@ -3,6 +3,8 @@ import * as ReactDom from 'react-dom';
 import {info} from './log';
 import {Session, ISession, BrokerClient} from 'broker-client-lib';
 import {Reader} from 'protobufjs';
+import {Lobby} from '../../../broker-react-lobby/src/index';
+
 
 const client = new BrokerClient();
 
@@ -89,8 +91,7 @@ const Index = ()=>{
         client.connect(`ws://localhost:8080`);
     }, [])
 
-    const createSessionClick = ()=>{
-        const name = prompt("Session Name", "New Session");
+    const createSessionClick = (name)=>{
         client.sendCreateSession(name);
     }
 
@@ -115,30 +116,10 @@ const Index = ()=>{
             {session && connected ? `Chatters: ${session.clients}` : ""}
         </div>
         {
-            !session ? 
-            <div>
-                <button onClick={()=>createSessionClick()}>Create Session</button>
-                <table>
-                    <tbody>
-                    {sessions.map((s,i)=>{
-                        return  <tr key={i}>
-                                    <td>
-                                        {s.id}
-                                    </td>
-                                    <td>
-                                        {s.name}
-                                    </td>
-                                    <td>
-                                        {s.passwordProtected == true ? "X" : ""}
-                                    </td>
-                                    <td>
-                                    <button onClick={()=>joinClick(s.id, s.passwordProtected)}>Join</button>
-                                    </td>
-                                </tr>
-                    })}
-                    </tbody>
-                </table> 
-            </div>
+
+            
+            !session ? <Lobby sessions={sessions} onCreateSession={createSessionClick} onJoin={(id)=>joinClick(id, false)}></Lobby>
+            
 
                 :
                 <div>
