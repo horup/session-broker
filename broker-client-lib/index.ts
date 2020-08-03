@@ -1,5 +1,7 @@
 import {ClientMsg, ServerMsg, ISession} from 'shared';
 export * from 'shared';
+export * from './BrokerCommandClient';
+
 export interface Client
 {
     id:number;
