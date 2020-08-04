@@ -1,3 +1,3 @@
 import {ClientMsg, ServerMsg, ISession} from 'shared';
-export * from './Client';
+export * from './BrokerClient';
 export * from './BrokerCommandClient';
